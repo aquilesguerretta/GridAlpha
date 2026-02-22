@@ -1,0 +1,767 @@
+{
+  "_meta": {
+    "scenario": "High renewable penetration — solar flooding midday",
+    "snapshot_date": "2025-06-15",
+    "snapshot_hour_ept": 13,
+    "description": "GridAlpha Demo Mode deterministic snapshot. Scenario: PJM peak solar event (June 15 2025 13:00 EPT). Solar 38.5% of load. LMP suppressed in western zones. RECO has highest spark spread. Battery arbitrage $42/MWh net in eastern corridor. VIRTUAL_SELLER convergence signal active.",
+    "version": "2.0",
+    "envelope_note": "All data sections now follow the standard ApiResponse envelope: meta / data / summary."
+  },
+
+  "generation": {
+    "meta": {
+      "api_version": "1.0",
+      "is_demo": true,
+      "zone": "ALL",
+      "start": "2025-06-14 13:00",
+      "end": "2025-06-15 13:00",
+      "timezone": "America/New_York",
+      "last_updated_ept": "2025-06-15T13:00:00-04:00",
+      "units": "MW",
+      "data_quality": "DEMO"
+    },
+    "data": [
+      {"datetime_beginning_ept": "2025-06-15T13:00:00", "datetime_beginning_utc": "2025-06-15T17:00:00Z", "fuel_type": "Nuclear",           "mw": 32148.4, "is_renewable": false},
+      {"datetime_beginning_ept": "2025-06-15T13:00:00", "datetime_beginning_utc": "2025-06-15T17:00:00Z", "fuel_type": "Gas",               "mw": 28472.6, "is_renewable": false},
+      {"datetime_beginning_ept": "2025-06-15T13:00:00", "datetime_beginning_utc": "2025-06-15T17:00:00Z", "fuel_type": "Solar",             "mw": 22847.3, "is_renewable": true},
+      {"datetime_beginning_ept": "2025-06-15T13:00:00", "datetime_beginning_utc": "2025-06-15T17:00:00Z", "fuel_type": "Wind",              "mw": 18256.4, "is_renewable": true},
+      {"datetime_beginning_ept": "2025-06-15T13:00:00", "datetime_beginning_utc": "2025-06-15T17:00:00Z", "fuel_type": "Coal",              "mw": 6892.8,  "is_renewable": false},
+      {"datetime_beginning_ept": "2025-06-15T13:00:00", "datetime_beginning_utc": "2025-06-15T17:00:00Z", "fuel_type": "Hydro",             "mw": 5124.7,  "is_renewable": true},
+      {"datetime_beginning_ept": "2025-06-15T13:00:00", "datetime_beginning_utc": "2025-06-15T17:00:00Z", "fuel_type": "Other Renewables",  "mw": 4218.3,  "is_renewable": true},
+      {"datetime_beginning_ept": "2025-06-15T13:00:00", "datetime_beginning_utc": "2025-06-15T17:00:00Z", "fuel_type": "Oil",               "mw": 342.7,   "is_renewable": false}
+    ],
+    "summary": {
+      "total_rows": 8,
+      "total_mw": 118303.2,
+      "renewable_mw": 50446.7,
+      "renewable_pct": 42.64,
+      "window_start_ept": "2025-06-14 13:00",
+      "window_end_ept": "2025-06-15 13:00"
+    }
+  },
+
+  "lmp": {
+    "meta": {
+      "api_version": "1.0",
+      "is_demo": true,
+      "zone": "ALL",
+      "start": "2025-06-15T13:00:00-04:00",
+      "end": "2025-06-15T13:00:00-04:00",
+      "timezone": "America/New_York",
+      "last_updated_ept": "2025-06-15T13:00:00-04:00",
+      "units": "$/MWh",
+      "data_quality": "DEMO"
+    },
+    "data": [
+      {"zone_name": "AEP",     "lmp_total": 16.42, "energy_component": 18.20, "congestion_component": -3.12, "loss_component": 1.34, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "AECO",    "lmp_total": 48.33, "energy_component": 42.15, "congestion_component":  4.82, "loss_component": 1.36, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "APS",     "lmp_total": 32.15, "energy_component": 29.42, "congestion_component":  1.87, "loss_component": 0.86, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "ATSI",    "lmp_total": 18.73, "energy_component": 20.14, "congestion_component": -2.48, "loss_component": 1.07, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "BGE",     "lmp_total": 44.82, "energy_component": 41.23, "congestion_component":  2.18, "loss_component": 1.41, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "COMED",   "lmp_total": 22.84, "energy_component": 21.62, "congestion_component":  0.48, "loss_component": 0.74, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "DAY",     "lmp_total": 19.46, "energy_component": 21.04, "congestion_component": -2.73, "loss_component": 1.15, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "DEOK",    "lmp_total": 17.29, "energy_component": 19.02, "congestion_component": -2.78, "loss_component": 1.05, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "DOM",     "lmp_total": 41.28, "energy_component": 38.46, "congestion_component":  1.62, "loss_component": 1.20, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "DPL",     "lmp_total": 39.47, "energy_component": 36.82, "congestion_component":  1.48, "loss_component": 1.17, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "DUQ",     "lmp_total": 14.18, "energy_component": 15.74, "congestion_component": -2.63, "loss_component": 1.07, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "EKPC",    "lmp_total": 23.71, "energy_component": 22.48, "congestion_component":  0.38, "loss_component": 0.85, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "JCPL",    "lmp_total": 40.18, "energy_component": 37.24, "congestion_component":  1.74, "loss_component": 1.20, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "METED",   "lmp_total": 35.19, "energy_component": 32.48, "congestion_component":  1.46, "loss_component": 1.25, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "OVEC",    "lmp_total": 15.83, "energy_component": 17.42, "congestion_component": -2.64, "loss_component": 1.05, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "PECO",    "lmp_total": 38.67, "energy_component": 35.82, "congestion_component":  1.63, "loss_component": 1.22, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "PENELEC", "lmp_total": 28.47, "energy_component": 26.14, "congestion_component":  1.22, "loss_component": 1.11, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "PEPCO",   "lmp_total": 43.66, "energy_component": 40.38, "congestion_component":  1.98, "loss_component": 1.30, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "PJM-RTO", "lmp_total": 31.85, "energy_component": 29.74, "congestion_component":  1.02, "loss_component": 1.09, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "PPL",     "lmp_total": 36.24, "energy_component": 33.48, "congestion_component":  1.52, "loss_component": 1.24, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "PSEG",    "lmp_total": 42.15, "energy_component": 39.18, "congestion_component":  1.72, "loss_component": 1.25, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"},
+      {"zone_name": "RECO",    "lmp_total": 54.71, "energy_component": 42.15, "congestion_component": 11.06, "loss_component": 1.50, "timestamp": "2025-06-15T13:00:00-04:00", "timestamp_utc": "2025-06-15T17:00:00+00:00"}
+    ],
+    "summary": {
+      "total_zones": 22,
+      "avg_lmp": 32.07,
+      "max_lmp": 54.71,
+      "min_lmp": 14.18,
+      "max_congestion_zone": "RECO",
+      "snapshot_hour_ept": "2025-06-15T13:00:00-04:00"
+    }
+  },
+
+  "spark_spread": {
+    "meta": {
+      "api_version": "1.0",
+      "is_demo": true,
+      "zone": "ALL",
+      "start": "2025-06-15T13:00:00-04:00",
+      "end": "2025-06-15T13:00:00-04:00",
+      "timezone": "America/New_York",
+      "last_updated_ept": "2025-06-15T13:00:00-04:00",
+      "units": "$/MWh",
+      "data_quality": "DEMO"
+    },
+    "data": [
+      {"zone_name": "AEP",     "lmp": 16.42, "gas_cost": 19.95, "spark_spread":  -3.53, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "AECO",    "lmp": 48.33, "gas_cost": 19.95, "spark_spread":  28.38, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "APS",     "lmp": 32.15, "gas_cost": 19.95, "spark_spread":  12.20, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "ATSI",    "lmp": 18.73, "gas_cost": 19.95, "spark_spread":  -1.22, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "BGE",     "lmp": 44.82, "gas_cost": 19.95, "spark_spread":  24.87, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "COMED",   "lmp": 22.84, "gas_cost": 19.95, "spark_spread":   2.89, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "DAY",     "lmp": 19.46, "gas_cost": 19.95, "spark_spread":  -0.49, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "DEOK",    "lmp": 17.29, "gas_cost": 19.95, "spark_spread":  -2.66, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "DOM",     "lmp": 41.28, "gas_cost": 19.95, "spark_spread":  21.33, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "DPL",     "lmp": 39.47, "gas_cost": 19.95, "spark_spread":  19.52, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "DUQ",     "lmp": 14.18, "gas_cost": 19.95, "spark_spread":  -5.77, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "EKPC",    "lmp": 23.71, "gas_cost": 19.95, "spark_spread":   3.76, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "JCPL",    "lmp": 40.18, "gas_cost": 19.95, "spark_spread":  20.23, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "METED",   "lmp": 35.19, "gas_cost": 19.95, "spark_spread":  15.24, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "OVEC",    "lmp": 15.83, "gas_cost": 19.95, "spark_spread":  -4.12, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "PECO",    "lmp": 38.67, "gas_cost": 19.95, "spark_spread":  18.72, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "PENELEC", "lmp": 28.47, "gas_cost": 19.95, "spark_spread":   8.52, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "PEPCO",   "lmp": 43.66, "gas_cost": 19.95, "spark_spread":  23.71, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "PJM-RTO", "lmp": 31.85, "gas_cost": 19.95, "spark_spread":  11.90, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "PPL",     "lmp": 36.24, "gas_cost": 19.95, "spark_spread":  16.29, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "PSEG",    "lmp": 42.15, "gas_cost": 19.95, "spark_spread":  22.20, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"},
+      {"zone_name": "RECO",    "lmp": 54.71, "gas_cost": 19.95, "spark_spread":  34.76, "heat_rate": 7.0, "gas_price_used": 2.85, "timestamp": "2025-06-15T13:00:00-04:00"}
+    ],
+    "summary": {
+      "total_zones": 22,
+      "profitable_zones": 16,
+      "avg_spark_spread": 12.12,
+      "best_zone": "RECO",
+      "worst_zone": "DUQ",
+      "gas_cost_per_mwh": 19.95,
+      "heat_rate": 7.0,
+      "gas_price_per_mmbtu": 2.85,
+      "snapshot_hour_ept": "2025-06-15T13:00:00-04:00"
+    }
+  },
+
+  "battery_arbitrage": {
+    "meta": {
+      "api_version": "1.0",
+      "is_demo": true,
+      "zone": "ALL",
+      "start": "2025-06-14T13:00:00-04:00",
+      "end": "2025-06-15T13:00:00-04:00",
+      "timezone": "America/New_York",
+      "last_updated_ept": "2025-06-15T13:00:00-04:00",
+      "units": "$/MWh",
+      "data_quality": "DEMO"
+    },
+    "data": [
+      {
+        "zone_name": "RECO",
+        "charge_hours":    ["2025-06-15T11:00:00-04:00","2025-06-15T12:00:00-04:00","2025-06-15T13:00:00-04:00","2025-06-15T14:00:00-04:00"],
+        "discharge_hours": ["2025-06-15T18:00:00-04:00","2025-06-15T19:00:00-04:00","2025-06-15T20:00:00-04:00","2025-06-15T21:00:00-04:00"],
+        "charge_price": 7.38, "discharge_price": 79.88, "round_trip_efficiency": 0.87,
+        "cycling_cost": 20.0, "daily_spread_per_mwh": 62.12, "total_cycling_costs": 20.0,
+        "net_profit_per_mwh": 42.12, "is_profitable": true,
+        "timestamp": "2025-06-15T13:00:00-04:00",
+        "hours_available": 24, "charge_hours_used": 4, "discharge_hours_used": 4, "hours_gated_out": 0
+      },
+      {
+        "zone_name": "BGE",
+        "charge_hours":    ["2025-06-15T11:00:00-04:00","2025-06-15T12:00:00-04:00","2025-06-15T13:00:00-04:00","2025-06-15T14:00:00-04:00"],
+        "discharge_hours": ["2025-06-15T18:00:00-04:00","2025-06-15T19:00:00-04:00","2025-06-15T20:00:00-04:00","2025-06-15T21:00:00-04:00"],
+        "charge_price": 8.94, "discharge_price": 68.42, "round_trip_efficiency": 0.87,
+        "cycling_cost": 20.0, "daily_spread_per_mwh": 50.59, "total_cycling_costs": 20.0,
+        "net_profit_per_mwh": 30.59, "is_profitable": true,
+        "timestamp": "2025-06-15T13:00:00-04:00",
+        "hours_available": 24, "charge_hours_used": 4, "discharge_hours_used": 4, "hours_gated_out": 0
+      },
+      {
+        "zone_name": "PSEG",
+        "charge_hours":    ["2025-06-15T11:00:00-04:00","2025-06-15T12:00:00-04:00","2025-06-15T13:00:00-04:00","2025-06-15T14:00:00-04:00"],
+        "discharge_hours": ["2025-06-15T17:00:00-04:00","2025-06-15T18:00:00-04:00","2025-06-15T19:00:00-04:00","2025-06-15T20:00:00-04:00"],
+        "charge_price": 8.47, "discharge_price": 64.83, "round_trip_efficiency": 0.87,
+        "cycling_cost": 20.0, "daily_spread_per_mwh": 47.93, "total_cycling_costs": 20.0,
+        "net_profit_per_mwh": 27.93, "is_profitable": true,
+        "timestamp": "2025-06-15T13:00:00-04:00",
+        "hours_available": 24, "charge_hours_used": 4, "discharge_hours_used": 4, "hours_gated_out": 0
+      },
+      {
+        "zone_name": "COMED",
+        "charge_hours":    ["2025-06-15T11:00:00-04:00","2025-06-15T12:00:00-04:00","2025-06-15T13:00:00-04:00","2025-06-15T14:00:00-04:00"],
+        "discharge_hours": ["2025-06-15T19:00:00-04:00"],
+        "charge_price": 12.84, "discharge_price": 38.42, "round_trip_efficiency": 0.87,
+        "cycling_cost": 20.0, "daily_spread_per_mwh": 20.59, "total_cycling_costs": 20.0,
+        "net_profit_per_mwh": 0.59, "is_profitable": true,
+        "timestamp": "2025-06-15T13:00:00-04:00",
+        "hours_available": 24, "charge_hours_used": 4, "discharge_hours_used": 1, "hours_gated_out": 3
+      },
+      {
+        "zone_name": "AEP",
+        "charge_hours":    ["2025-06-15T10:00:00-04:00","2025-06-15T11:00:00-04:00","2025-06-15T12:00:00-04:00","2025-06-15T13:00:00-04:00"],
+        "discharge_hours": [],
+        "charge_price": 11.93, "discharge_price": 0.0, "round_trip_efficiency": 0.87,
+        "cycling_cost": 20.0, "daily_spread_per_mwh": -11.93, "total_cycling_costs": 0.0,
+        "net_profit_per_mwh": -11.93, "is_profitable": false,
+        "timestamp": "2025-06-15T13:00:00-04:00",
+        "hours_available": 24, "charge_hours_used": 4, "discharge_hours_used": 0, "hours_gated_out": 4
+      },
+      {
+        "zone_name": "DUQ",
+        "charge_hours":    ["2025-06-15T10:00:00-04:00","2025-06-15T11:00:00-04:00","2025-06-15T12:00:00-04:00","2025-06-15T13:00:00-04:00"],
+        "discharge_hours": [],
+        "charge_price": 13.42, "discharge_price": 0.0, "round_trip_efficiency": 0.87,
+        "cycling_cost": 20.0, "daily_spread_per_mwh": -13.42, "total_cycling_costs": 0.0,
+        "net_profit_per_mwh": -13.42, "is_profitable": false,
+        "timestamp": "2025-06-15T13:00:00-04:00",
+        "hours_available": 24, "charge_hours_used": 4, "discharge_hours_used": 0, "hours_gated_out": 4
+      }
+    ],
+    "summary": {
+      "total_zones": 6,
+      "profitable_zones": 4,
+      "cycling_cost": 20.0,
+      "avg_daily_spread": 25.98,
+      "avg_net_profit": 12.65,
+      "best_zone": "RECO",
+      "best_spread": 62.12,
+      "worst_zone": "DUQ",
+      "worst_spread": -13.42,
+      "total_gated_hours": 11,
+      "round_trip_efficiency": 0.87,
+      "window_hours": 24,
+      "n_charge_hours": 4,
+      "n_discharge_hours": 4
+    }
+  },
+
+  "convergence": {
+    "meta": {
+      "api_version": "1.0",
+      "is_demo": true,
+      "zone": "PJM-RTO",
+      "start": "2025-06-14T00:00:00-04:00",
+      "end": "2025-06-15T00:00:00-04:00",
+      "timezone": "America/New_York",
+      "last_updated_ept": "2025-06-15T13:00:00-04:00",
+      "units": "$/MWh",
+      "data_quality": "DEMO"
+    },
+    "data": [
+      {"hour": "2025-06-14T00:00:00-04:00", "da_price": 28.50, "rt_price": 26.80, "spread":  -1.70, "event_flag": "Normal"},
+      {"hour": "2025-06-14T01:00:00-04:00", "da_price": 24.30, "rt_price": 23.10, "spread":  -1.20, "event_flag": "Normal"},
+      {"hour": "2025-06-14T02:00:00-04:00", "da_price": 22.15, "rt_price": 21.40, "spread":  -0.75, "event_flag": "Normal"},
+      {"hour": "2025-06-14T03:00:00-04:00", "da_price": 21.80, "rt_price": 21.20, "spread":  -0.60, "event_flag": "Normal"},
+      {"hour": "2025-06-14T04:00:00-04:00", "da_price": 22.40, "rt_price": 21.90, "spread":  -0.50, "event_flag": "Normal"},
+      {"hour": "2025-06-14T05:00:00-04:00", "da_price": 26.80, "rt_price": 24.10, "spread":  -2.70, "event_flag": "Normal"},
+      {"hour": "2025-06-14T06:00:00-04:00", "da_price": 34.20, "rt_price": 28.50, "spread":  -5.70, "event_flag": "Normal"},
+      {"hour": "2025-06-14T07:00:00-04:00", "da_price": 42.80, "rt_price": 32.40, "spread": -10.40, "event_flag": "Normal"},
+      {"hour": "2025-06-14T08:00:00-04:00", "da_price": 48.60, "rt_price": 31.20, "spread": -17.40, "event_flag": "Normal"},
+      {"hour": "2025-06-14T09:00:00-04:00", "da_price": 52.40, "rt_price": 27.80, "spread": -24.60, "event_flag": "Normal"},
+      {"hour": "2025-06-14T10:00:00-04:00", "da_price": 55.10, "rt_price": 24.30, "spread": -30.80, "event_flag": "Normal"},
+      {"hour": "2025-06-14T11:00:00-04:00", "da_price": 56.80, "rt_price": 22.10, "spread": -34.70, "event_flag": "Normal"},
+      {"hour": "2025-06-14T12:00:00-04:00", "da_price": 54.20, "rt_price": 19.40, "spread": -34.80, "event_flag": "Normal"},
+      {"hour": "2025-06-14T13:00:00-04:00", "da_price": 51.30, "rt_price": 21.80, "spread": -29.50, "event_flag": "Normal"},
+      {"hour": "2025-06-14T14:00:00-04:00", "da_price": 48.70, "rt_price": 23.40, "spread": -25.30, "event_flag": "Normal"},
+      {"hour": "2025-06-14T15:00:00-04:00", "da_price": 47.50, "rt_price": 25.60, "spread": -21.90, "event_flag": "Normal"},
+      {"hour": "2025-06-14T16:00:00-04:00", "da_price": 50.20, "rt_price": 32.40, "spread": -17.80, "event_flag": "Normal"},
+      {"hour": "2025-06-14T17:00:00-04:00", "da_price": 58.40, "rt_price": 48.20, "spread": -10.20, "event_flag": "Normal"},
+      {"hour": "2025-06-14T18:00:00-04:00", "da_price": 72.30, "rt_price": 68.50, "spread":  -3.80, "event_flag": "Normal"},
+      {"hour": "2025-06-14T19:00:00-04:00", "da_price": 74.80, "rt_price": 78.40, "spread":   3.60, "event_flag": "Normal"},
+      {"hour": "2025-06-14T20:00:00-04:00", "da_price": 65.40, "rt_price": 62.80, "spread":  -2.60, "event_flag": "Normal"},
+      {"hour": "2025-06-14T21:00:00-04:00", "da_price": 52.60, "rt_price": 54.20, "spread":   1.60, "event_flag": "Normal"},
+      {"hour": "2025-06-14T22:00:00-04:00", "da_price": 40.30, "rt_price": 38.70, "spread":  -1.60, "event_flag": "Normal"},
+      {"hour": "2025-06-14T23:00:00-04:00", "da_price": 32.80, "rt_price": 31.40, "spread":  -1.40, "event_flag": "Normal"}
+    ],
+    "summary": {
+      "zone": "PJM-RTO",
+      "avg_spread": -11.45,
+      "max_spread": 3.60,
+      "min_spread": -34.80,
+      "scarcity_hours": 0,
+      "oversupply_hours": 0,
+      "total_hours": 24,
+      "window_start": "2025-06-14T00:00:00-04:00",
+      "window_end": "2025-06-15T00:00:00-04:00",
+      "dominant_signal": "VIRTUAL_SELLER",
+      "market_narrative": "Wind and solar suppressed Real-Time prices below Day-Ahead forecasts — virtual sellers who sold RT and bought DA were profitable."
+    }
+  },
+
+  "weather": {
+    "meta": {
+      "api_version": "1.0",
+      "is_demo": true,
+      "zone": "BGE",
+      "start": "2025-06-15T08:00:00-04:00",
+      "end": "2025-06-15T19:59:59-04:00",
+      "timezone": "America/New_York",
+      "last_updated_ept": "2025-06-15T13:00:00-04:00",
+      "units": "°F / MW",
+      "data_quality": "DEMO"
+    },
+    "data": [
+      {"timestamp": "2025-06-15T08:00:00-04:00", "temperature_f": 74.3, "temperature_c": 23.5, "zone": "BGE", "station_id": "KPHL", "load_forecast_mw":  8082.6, "actual_load_mw":  8247.3, "load_delta_pct": 2.04, "weather_alert": "Normal"},
+      {"timestamp": "2025-06-15T09:00:00-04:00", "temperature_f": 77.1, "temperature_c": 25.1, "zone": "BGE", "station_id": "KPHL", "load_forecast_mw":  8428.7, "actual_load_mw":  8612.4, "load_delta_pct": 2.18, "weather_alert": "Normal"},
+      {"timestamp": "2025-06-15T10:00:00-04:00", "temperature_f": 79.6, "temperature_c": 26.4, "zone": "BGE", "station_id": "KPHL", "load_forecast_mw":  8917.3, "actual_load_mw":  9134.8, "load_delta_pct": 2.44, "weather_alert": "Normal"},
+      {"timestamp": "2025-06-15T11:00:00-04:00", "temperature_f": 81.8, "temperature_c": 27.7, "zone": "BGE", "station_id": "KPHL", "load_forecast_mw":  9187.4, "actual_load_mw":  9428.6, "load_delta_pct": 2.62, "weather_alert": "Normal"},
+      {"timestamp": "2025-06-15T12:00:00-04:00", "temperature_f": 83.4, "temperature_c": 28.6, "zone": "BGE", "station_id": "KPHL", "load_forecast_mw":  9524.8, "actual_load_mw":  9742.3, "load_delta_pct": 2.28, "weather_alert": "Normal"},
+      {"timestamp": "2025-06-15T13:00:00-04:00", "temperature_f": 84.7, "temperature_c": 29.3, "zone": "BGE", "station_id": "KPHL", "load_forecast_mw":  9723.4, "actual_load_mw":  9987.6, "load_delta_pct": 2.72, "weather_alert": "Normal"},
+      {"timestamp": "2025-06-15T14:00:00-04:00", "temperature_f": 85.2, "temperature_c": 29.6, "zone": "BGE", "station_id": "KPHL", "load_forecast_mw":  9874.3, "actual_load_mw": 10124.8, "load_delta_pct": 2.54, "weather_alert": "Normal"},
+      {"timestamp": "2025-06-15T15:00:00-04:00", "temperature_f": 84.8, "temperature_c": 29.3, "zone": "BGE", "station_id": "KPHL", "load_forecast_mw":  9812.7, "actual_load_mw": 10048.4, "load_delta_pct": 2.40, "weather_alert": "Normal"},
+      {"timestamp": "2025-06-15T16:00:00-04:00", "temperature_f": 83.1, "temperature_c": 28.4, "zone": "BGE", "station_id": "KPHL", "load_forecast_mw":  9634.8, "actual_load_mw":  9847.2, "load_delta_pct": 2.20, "weather_alert": "Normal"},
+      {"timestamp": "2025-06-15T17:00:00-04:00", "temperature_f": 80.3, "temperature_c": 26.8, "zone": "BGE", "station_id": "KPHL", "load_forecast_mw":  9482.3, "actual_load_mw":  9643.7, "load_delta_pct": 1.70, "weather_alert": "Normal"},
+      {"timestamp": "2025-06-15T18:00:00-04:00", "temperature_f": 77.4, "temperature_c": 25.2, "zone": "BGE", "station_id": "KPHL", "load_forecast_mw":  9283.4, "actual_load_mw":  9428.6, "load_delta_pct": 1.56, "weather_alert": "Normal"},
+      {"timestamp": "2025-06-15T19:00:00-04:00", "temperature_f": 74.2, "temperature_c": 23.4, "zone": "BGE", "station_id": "KPHL", "load_forecast_mw":  9027.6, "actual_load_mw":  9142.8, "load_delta_pct": 1.27, "weather_alert": "Normal"}
+    ],
+    "summary": {
+      "zone": "BGE",
+      "station_id": "KPHL",
+      "station_city": "Philadelphia",
+      "avg_temp_f": 80.49,
+      "max_temp_f": 85.2,
+      "min_temp_f": 74.2,
+      "heat_hours": 0,
+      "cold_hours": 0,
+      "total_hours": 12,
+      "window_start": "2025-06-15T08:00:00-04:00",
+      "window_end": "2025-06-15T19:59:59-04:00"
+    }
+  },
+
+  "marginal_fuel": {
+    "meta": {
+      "api_version": "1.0",
+      "is_demo": true,
+      "zone": "ALL",
+      "start": "2025-06-15T00:00:00-04:00",
+      "end": "2025-06-15T23:59:00-04:00",
+      "timezone": "America/New_York",
+      "last_updated_ept": "2025-06-15T13:00:00-04:00",
+      "units": "signal_strength (0-100)",
+      "data_quality": "DEMO"
+    },
+    "data": [
+      {
+        "zone": "AEP", "current_fuel": "Solar", "is_fossil": false, "signal_strength": 82,
+        "market_note": "AEP zone solar generation is flooding the midday market, suppressing Real-Time prices well below Day-Ahead — a textbook solar cannibalization event.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Gas-CC"}, {"hour":  1, "fuel_type": "Gas-CC"}, {"hour":  2, "fuel_type": "Gas-CC"},
+          {"hour":  3, "fuel_type": "Gas-CC"}, {"hour":  4, "fuel_type": "Gas-CC"}, {"hour":  5, "fuel_type": "Gas-CC"},
+          {"hour":  6, "fuel_type": "Gas-CC"}, {"hour":  7, "fuel_type": "Solar"},  {"hour":  8, "fuel_type": "Solar"},
+          {"hour":  9, "fuel_type": "Solar"},  {"hour": 10, "fuel_type": "Solar"},  {"hour": 11, "fuel_type": "Solar"},
+          {"hour": 12, "fuel_type": "Solar"},  {"hour": 13, "fuel_type": "Solar"},  {"hour": 14, "fuel_type": "Solar"},
+          {"hour": 15, "fuel_type": "Solar"},  {"hour": 16, "fuel_type": "Solar"},  {"hour": 17, "fuel_type": "Gas-CC"},
+          {"hour": 18, "fuel_type": "Gas-CC"}, {"hour": 19, "fuel_type": "Gas-CC"}, {"hour": 20, "fuel_type": "Gas-CC"},
+          {"hour": 21, "fuel_type": "Gas-CC"}, {"hour": 22, "fuel_type": "Gas-CC"}, {"hour": 23, "fuel_type": "Gas-CC"}
+        ]
+      },
+      {
+        "zone": "AECO", "current_fuel": "Gas-CC", "is_fossil": true, "signal_strength": 68,
+        "market_note": "Natural gas combined-cycle units are price-setting in AECO due to high local demand and limited solar penetration along the NJ coast.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Gas-CC"}, {"hour":  1, "fuel_type": "Gas-CC"}, {"hour":  2, "fuel_type": "Gas-CC"},
+          {"hour":  3, "fuel_type": "Gas-CC"}, {"hour":  4, "fuel_type": "Gas-CC"}, {"hour":  5, "fuel_type": "Gas-CC"},
+          {"hour":  6, "fuel_type": "Gas-CC"}, {"hour":  7, "fuel_type": "Gas-CC"}, {"hour":  8, "fuel_type": "Gas-CC"},
+          {"hour":  9, "fuel_type": "Gas-CC"}, {"hour": 10, "fuel_type": "Gas-CC"}, {"hour": 11, "fuel_type": "Gas-CC"},
+          {"hour": 12, "fuel_type": "Gas-CC"}, {"hour": 13, "fuel_type": "Gas-CC"}, {"hour": 14, "fuel_type": "Gas-CC"},
+          {"hour": 15, "fuel_type": "Gas-CC"}, {"hour": 16, "fuel_type": "Gas-CC"}, {"hour": 17, "fuel_type": "Gas-CC"},
+          {"hour": 18, "fuel_type": "Gas-CC"}, {"hour": 19, "fuel_type": "Gas-CC"}, {"hour": 20, "fuel_type": "Gas-CC"},
+          {"hour": 21, "fuel_type": "Gas-CC"}, {"hour": 22, "fuel_type": "Gas-CC"}, {"hour": 23, "fuel_type": "Gas-CC"}
+        ]
+      },
+      {
+        "zone": "APS", "current_fuel": "Solar", "is_fossil": false, "signal_strength": 82,
+        "market_note": "Solar generation in APS is setting the marginal price, depressing midday prices across the Mid-Atlantic/West Virginia corridor.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Gas-CC"}, {"hour":  1, "fuel_type": "Gas-CC"}, {"hour":  2, "fuel_type": "Gas-CC"},
+          {"hour":  3, "fuel_type": "Gas-CC"}, {"hour":  4, "fuel_type": "Gas-CC"}, {"hour":  5, "fuel_type": "Gas-CC"},
+          {"hour":  6, "fuel_type": "Gas-CC"}, {"hour":  7, "fuel_type": "Solar"},  {"hour":  8, "fuel_type": "Solar"},
+          {"hour":  9, "fuel_type": "Solar"},  {"hour": 10, "fuel_type": "Solar"},  {"hour": 11, "fuel_type": "Solar"},
+          {"hour": 12, "fuel_type": "Solar"},  {"hour": 13, "fuel_type": "Solar"},  {"hour": 14, "fuel_type": "Solar"},
+          {"hour": 15, "fuel_type": "Solar"},  {"hour": 16, "fuel_type": "Solar"},  {"hour": 17, "fuel_type": "Gas-CC"},
+          {"hour": 18, "fuel_type": "Gas-CC"}, {"hour": 19, "fuel_type": "Gas-CC"}, {"hour": 20, "fuel_type": "Gas-CC"},
+          {"hour": 21, "fuel_type": "Gas-CC"}, {"hour": 22, "fuel_type": "Gas-CC"}, {"hour": 23, "fuel_type": "Gas-CC"}
+        ]
+      },
+      {
+        "zone": "ATSI", "current_fuel": "Nuclear", "is_fossil": false, "signal_strength": 96,
+        "market_note": "Nuclear baseload in ATSI is price-setting during this solar-saturated period, providing stable low-cost output in northern Ohio.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Nuclear"}, {"hour":  1, "fuel_type": "Nuclear"}, {"hour":  2, "fuel_type": "Nuclear"},
+          {"hour":  3, "fuel_type": "Nuclear"}, {"hour":  4, "fuel_type": "Nuclear"}, {"hour":  5, "fuel_type": "Nuclear"},
+          {"hour":  6, "fuel_type": "Nuclear"}, {"hour":  7, "fuel_type": "Nuclear"}, {"hour":  8, "fuel_type": "Nuclear"},
+          {"hour":  9, "fuel_type": "Nuclear"}, {"hour": 10, "fuel_type": "Nuclear"}, {"hour": 11, "fuel_type": "Nuclear"},
+          {"hour": 12, "fuel_type": "Nuclear"}, {"hour": 13, "fuel_type": "Nuclear"}, {"hour": 14, "fuel_type": "Nuclear"},
+          {"hour": 15, "fuel_type": "Nuclear"}, {"hour": 16, "fuel_type": "Nuclear"}, {"hour": 17, "fuel_type": "Nuclear"},
+          {"hour": 18, "fuel_type": "Nuclear"}, {"hour": 19, "fuel_type": "Nuclear"}, {"hour": 20, "fuel_type": "Nuclear"},
+          {"hour": 21, "fuel_type": "Nuclear"}, {"hour": 22, "fuel_type": "Nuclear"}, {"hour": 23, "fuel_type": "Nuclear"}
+        ]
+      },
+      {
+        "zone": "BGE", "current_fuel": "Solar", "is_fossil": false, "signal_strength": 82,
+        "market_note": "Maryland solar is flooding the BGE zone at 13:00 EPT, pushing RT prices $17 below Day-Ahead commitments.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Gas-CC"}, {"hour":  1, "fuel_type": "Gas-CC"}, {"hour":  2, "fuel_type": "Gas-CC"},
+          {"hour":  3, "fuel_type": "Gas-CC"}, {"hour":  4, "fuel_type": "Gas-CC"}, {"hour":  5, "fuel_type": "Gas-CC"},
+          {"hour":  6, "fuel_type": "Gas-CC"}, {"hour":  7, "fuel_type": "Solar"},  {"hour":  8, "fuel_type": "Solar"},
+          {"hour":  9, "fuel_type": "Solar"},  {"hour": 10, "fuel_type": "Solar"},  {"hour": 11, "fuel_type": "Solar"},
+          {"hour": 12, "fuel_type": "Solar"},  {"hour": 13, "fuel_type": "Solar"},  {"hour": 14, "fuel_type": "Solar"},
+          {"hour": 15, "fuel_type": "Solar"},  {"hour": 16, "fuel_type": "Solar"},  {"hour": 17, "fuel_type": "Gas-CC"},
+          {"hour": 18, "fuel_type": "Gas-CC"}, {"hour": 19, "fuel_type": "Gas-CC"}, {"hour": 20, "fuel_type": "Gas-CC"},
+          {"hour": 21, "fuel_type": "Gas-CC"}, {"hour": 22, "fuel_type": "Gas-CC"}, {"hour": 23, "fuel_type": "Gas-CC"}
+        ]
+      },
+      {
+        "zone": "COMED", "current_fuel": "Wind", "is_fossil": false, "signal_strength": 74,
+        "market_note": "Strong Illinois wind is the marginal unit in COMED, keeping prices suppressed and making virtual sellers profitable.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Wind"}, {"hour":  1, "fuel_type": "Wind"}, {"hour":  2, "fuel_type": "Wind"},
+          {"hour":  3, "fuel_type": "Wind"}, {"hour":  4, "fuel_type": "Wind"}, {"hour":  5, "fuel_type": "Wind"},
+          {"hour":  6, "fuel_type": "Wind"}, {"hour":  7, "fuel_type": "Wind"}, {"hour":  8, "fuel_type": "Wind"},
+          {"hour":  9, "fuel_type": "Wind"}, {"hour": 10, "fuel_type": "Wind"}, {"hour": 11, "fuel_type": "Wind"},
+          {"hour": 12, "fuel_type": "Wind"}, {"hour": 13, "fuel_type": "Wind"}, {"hour": 14, "fuel_type": "Wind"},
+          {"hour": 15, "fuel_type": "Wind"}, {"hour": 16, "fuel_type": "Wind"}, {"hour": 17, "fuel_type": "Wind"},
+          {"hour": 18, "fuel_type": "Wind"}, {"hour": 19, "fuel_type": "Wind"}, {"hour": 20, "fuel_type": "Wind"},
+          {"hour": 21, "fuel_type": "Wind"}, {"hour": 22, "fuel_type": "Wind"}, {"hour": 23, "fuel_type": "Wind"}
+        ]
+      },
+      {
+        "zone": "DAY", "current_fuel": "Solar", "is_fossil": false, "signal_strength": 82,
+        "market_note": "Dayton-area solar is at peak output, causing RT prices to undershoot Day-Ahead forecasts by over $15/MWh.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Gas-CC"}, {"hour":  1, "fuel_type": "Gas-CC"}, {"hour":  2, "fuel_type": "Gas-CC"},
+          {"hour":  3, "fuel_type": "Gas-CC"}, {"hour":  4, "fuel_type": "Gas-CC"}, {"hour":  5, "fuel_type": "Gas-CC"},
+          {"hour":  6, "fuel_type": "Gas-CC"}, {"hour":  7, "fuel_type": "Solar"},  {"hour":  8, "fuel_type": "Solar"},
+          {"hour":  9, "fuel_type": "Solar"},  {"hour": 10, "fuel_type": "Solar"},  {"hour": 11, "fuel_type": "Solar"},
+          {"hour": 12, "fuel_type": "Solar"},  {"hour": 13, "fuel_type": "Solar"},  {"hour": 14, "fuel_type": "Solar"},
+          {"hour": 15, "fuel_type": "Solar"},  {"hour": 16, "fuel_type": "Solar"},  {"hour": 17, "fuel_type": "Gas-CC"},
+          {"hour": 18, "fuel_type": "Gas-CC"}, {"hour": 19, "fuel_type": "Gas-CC"}, {"hour": 20, "fuel_type": "Gas-CC"},
+          {"hour": 21, "fuel_type": "Gas-CC"}, {"hour": 22, "fuel_type": "Gas-CC"}, {"hour": 23, "fuel_type": "Gas-CC"}
+        ]
+      },
+      {
+        "zone": "DEOK", "current_fuel": "Nuclear", "is_fossil": false, "signal_strength": 96,
+        "market_note": "Nuclear units are price-setting in DEOK, with low marginal cost maintaining grid stability despite the system-wide renewable ramp.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Nuclear"}, {"hour":  1, "fuel_type": "Nuclear"}, {"hour":  2, "fuel_type": "Nuclear"},
+          {"hour":  3, "fuel_type": "Nuclear"}, {"hour":  4, "fuel_type": "Nuclear"}, {"hour":  5, "fuel_type": "Nuclear"},
+          {"hour":  6, "fuel_type": "Nuclear"}, {"hour":  7, "fuel_type": "Nuclear"}, {"hour":  8, "fuel_type": "Nuclear"},
+          {"hour":  9, "fuel_type": "Nuclear"}, {"hour": 10, "fuel_type": "Nuclear"}, {"hour": 11, "fuel_type": "Nuclear"},
+          {"hour": 12, "fuel_type": "Nuclear"}, {"hour": 13, "fuel_type": "Nuclear"}, {"hour": 14, "fuel_type": "Nuclear"},
+          {"hour": 15, "fuel_type": "Nuclear"}, {"hour": 16, "fuel_type": "Nuclear"}, {"hour": 17, "fuel_type": "Nuclear"},
+          {"hour": 18, "fuel_type": "Nuclear"}, {"hour": 19, "fuel_type": "Nuclear"}, {"hour": 20, "fuel_type": "Nuclear"},
+          {"hour": 21, "fuel_type": "Nuclear"}, {"hour": 22, "fuel_type": "Nuclear"}, {"hour": 23, "fuel_type": "Nuclear"}
+        ]
+      },
+      {
+        "zone": "DOM", "current_fuel": "Solar", "is_fossil": false, "signal_strength": 82,
+        "market_note": "Virginia solar is at peak output in DOM zone, suppressing prices and outcompeting gas for the marginal MWh.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Gas-CC"}, {"hour":  1, "fuel_type": "Gas-CC"}, {"hour":  2, "fuel_type": "Gas-CC"},
+          {"hour":  3, "fuel_type": "Gas-CC"}, {"hour":  4, "fuel_type": "Gas-CC"}, {"hour":  5, "fuel_type": "Gas-CC"},
+          {"hour":  6, "fuel_type": "Gas-CC"}, {"hour":  7, "fuel_type": "Solar"},  {"hour":  8, "fuel_type": "Solar"},
+          {"hour":  9, "fuel_type": "Solar"},  {"hour": 10, "fuel_type": "Solar"},  {"hour": 11, "fuel_type": "Solar"},
+          {"hour": 12, "fuel_type": "Solar"},  {"hour": 13, "fuel_type": "Solar"},  {"hour": 14, "fuel_type": "Solar"},
+          {"hour": 15, "fuel_type": "Solar"},  {"hour": 16, "fuel_type": "Solar"},  {"hour": 17, "fuel_type": "Gas-CC"},
+          {"hour": 18, "fuel_type": "Gas-CC"}, {"hour": 19, "fuel_type": "Gas-CC"}, {"hour": 20, "fuel_type": "Gas-CC"},
+          {"hour": 21, "fuel_type": "Gas-CC"}, {"hour": 22, "fuel_type": "Gas-CC"}, {"hour": 23, "fuel_type": "Gas-CC"}
+        ]
+      },
+      {
+        "zone": "DPL", "current_fuel": "Gas-CC", "is_fossil": true, "signal_strength": 68,
+        "market_note": "Natural gas combined-cycle is the marginal fuel in DPL zone, with Delmarva demand exceeding local solar output.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Gas-CC"}, {"hour":  1, "fuel_type": "Gas-CC"}, {"hour":  2, "fuel_type": "Gas-CC"},
+          {"hour":  3, "fuel_type": "Gas-CC"}, {"hour":  4, "fuel_type": "Gas-CC"}, {"hour":  5, "fuel_type": "Gas-CC"},
+          {"hour":  6, "fuel_type": "Gas-CC"}, {"hour":  7, "fuel_type": "Gas-CC"}, {"hour":  8, "fuel_type": "Gas-CC"},
+          {"hour":  9, "fuel_type": "Gas-CC"}, {"hour": 10, "fuel_type": "Gas-CC"}, {"hour": 11, "fuel_type": "Gas-CC"},
+          {"hour": 12, "fuel_type": "Gas-CC"}, {"hour": 13, "fuel_type": "Gas-CC"}, {"hour": 14, "fuel_type": "Gas-CC"},
+          {"hour": 15, "fuel_type": "Gas-CC"}, {"hour": 16, "fuel_type": "Gas-CC"}, {"hour": 17, "fuel_type": "Gas-CC"},
+          {"hour": 18, "fuel_type": "Gas-CC"}, {"hour": 19, "fuel_type": "Gas-CC"}, {"hour": 20, "fuel_type": "Gas-CC"},
+          {"hour": 21, "fuel_type": "Gas-CC"}, {"hour": 22, "fuel_type": "Gas-CC"}, {"hour": 23, "fuel_type": "Gas-CC"}
+        ]
+      },
+      {
+        "zone": "DUQ", "current_fuel": "Nuclear", "is_fossil": false, "signal_strength": 96,
+        "market_note": "Nuclear baseload is price-setting in DUQ zone during this solar-heavy midday, with Cheswick coal having retired.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Nuclear"}, {"hour":  1, "fuel_type": "Nuclear"}, {"hour":  2, "fuel_type": "Nuclear"},
+          {"hour":  3, "fuel_type": "Nuclear"}, {"hour":  4, "fuel_type": "Nuclear"}, {"hour":  5, "fuel_type": "Nuclear"},
+          {"hour":  6, "fuel_type": "Nuclear"}, {"hour":  7, "fuel_type": "Nuclear"}, {"hour":  8, "fuel_type": "Nuclear"},
+          {"hour":  9, "fuel_type": "Nuclear"}, {"hour": 10, "fuel_type": "Nuclear"}, {"hour": 11, "fuel_type": "Nuclear"},
+          {"hour": 12, "fuel_type": "Nuclear"}, {"hour": 13, "fuel_type": "Nuclear"}, {"hour": 14, "fuel_type": "Nuclear"},
+          {"hour": 15, "fuel_type": "Nuclear"}, {"hour": 16, "fuel_type": "Nuclear"}, {"hour": 17, "fuel_type": "Nuclear"},
+          {"hour": 18, "fuel_type": "Nuclear"}, {"hour": 19, "fuel_type": "Nuclear"}, {"hour": 20, "fuel_type": "Nuclear"},
+          {"hour": 21, "fuel_type": "Nuclear"}, {"hour": 22, "fuel_type": "Nuclear"}, {"hour": 23, "fuel_type": "Nuclear"}
+        ]
+      },
+      {
+        "zone": "EKPC", "current_fuel": "Coal", "is_fossil": true, "signal_strength": 89,
+        "market_note": "Coal remains the marginal fuel in EKPC zone, with Kentucky's renewable penetration remaining below system average.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Coal"}, {"hour":  1, "fuel_type": "Coal"}, {"hour":  2, "fuel_type": "Coal"},
+          {"hour":  3, "fuel_type": "Coal"}, {"hour":  4, "fuel_type": "Coal"}, {"hour":  5, "fuel_type": "Coal"},
+          {"hour":  6, "fuel_type": "Coal"}, {"hour":  7, "fuel_type": "Coal"}, {"hour":  8, "fuel_type": "Coal"},
+          {"hour":  9, "fuel_type": "Coal"}, {"hour": 10, "fuel_type": "Coal"}, {"hour": 11, "fuel_type": "Coal"},
+          {"hour": 12, "fuel_type": "Coal"}, {"hour": 13, "fuel_type": "Coal"}, {"hour": 14, "fuel_type": "Coal"},
+          {"hour": 15, "fuel_type": "Coal"}, {"hour": 16, "fuel_type": "Coal"}, {"hour": 17, "fuel_type": "Coal"},
+          {"hour": 18, "fuel_type": "Coal"}, {"hour": 19, "fuel_type": "Coal"}, {"hour": 20, "fuel_type": "Coal"},
+          {"hour": 21, "fuel_type": "Coal"}, {"hour": 22, "fuel_type": "Coal"}, {"hour": 23, "fuel_type": "Coal"}
+        ]
+      },
+      {
+        "zone": "JCPL", "current_fuel": "Gas-CC", "is_fossil": true, "signal_strength": 68,
+        "market_note": "Natural gas is price-setting in JCPL zone; congestion from PJM-West limits renewable imports into central Jersey.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Gas-CC"}, {"hour":  1, "fuel_type": "Gas-CC"}, {"hour":  2, "fuel_type": "Gas-CC"},
+          {"hour":  3, "fuel_type": "Gas-CC"}, {"hour":  4, "fuel_type": "Gas-CC"}, {"hour":  5, "fuel_type": "Gas-CC"},
+          {"hour":  6, "fuel_type": "Gas-CC"}, {"hour":  7, "fuel_type": "Gas-CC"}, {"hour":  8, "fuel_type": "Gas-CC"},
+          {"hour":  9, "fuel_type": "Gas-CC"}, {"hour": 10, "fuel_type": "Gas-CC"}, {"hour": 11, "fuel_type": "Gas-CC"},
+          {"hour": 12, "fuel_type": "Gas-CC"}, {"hour": 13, "fuel_type": "Gas-CC"}, {"hour": 14, "fuel_type": "Gas-CC"},
+          {"hour": 15, "fuel_type": "Gas-CC"}, {"hour": 16, "fuel_type": "Gas-CC"}, {"hour": 17, "fuel_type": "Gas-CC"},
+          {"hour": 18, "fuel_type": "Gas-CC"}, {"hour": 19, "fuel_type": "Gas-CC"}, {"hour": 20, "fuel_type": "Gas-CC"},
+          {"hour": 21, "fuel_type": "Gas-CC"}, {"hour": 22, "fuel_type": "Gas-CC"}, {"hour": 23, "fuel_type": "Gas-CC"}
+        ]
+      },
+      {
+        "zone": "METED", "current_fuel": "Solar", "is_fossil": false, "signal_strength": 82,
+        "market_note": "Solar in METED is suppressing midday prices in north-central Pennsylvania, creating arbitrage opportunities for storage operators.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Gas-CC"}, {"hour":  1, "fuel_type": "Gas-CC"}, {"hour":  2, "fuel_type": "Gas-CC"},
+          {"hour":  3, "fuel_type": "Gas-CC"}, {"hour":  4, "fuel_type": "Gas-CC"}, {"hour":  5, "fuel_type": "Gas-CC"},
+          {"hour":  6, "fuel_type": "Gas-CC"}, {"hour":  7, "fuel_type": "Solar"},  {"hour":  8, "fuel_type": "Solar"},
+          {"hour":  9, "fuel_type": "Solar"},  {"hour": 10, "fuel_type": "Solar"},  {"hour": 11, "fuel_type": "Solar"},
+          {"hour": 12, "fuel_type": "Solar"},  {"hour": 13, "fuel_type": "Solar"},  {"hour": 14, "fuel_type": "Solar"},
+          {"hour": 15, "fuel_type": "Solar"},  {"hour": 16, "fuel_type": "Solar"},  {"hour": 17, "fuel_type": "Gas-CC"},
+          {"hour": 18, "fuel_type": "Gas-CC"}, {"hour": 19, "fuel_type": "Gas-CC"}, {"hour": 20, "fuel_type": "Gas-CC"},
+          {"hour": 21, "fuel_type": "Gas-CC"}, {"hour": 22, "fuel_type": "Gas-CC"}, {"hour": 23, "fuel_type": "Gas-CC"}
+        ]
+      },
+      {
+        "zone": "OVEC", "current_fuel": "Coal", "is_fossil": true, "signal_strength": 89,
+        "market_note": "Coal is the marginal fuel in OVEC zone — the last major coal-heavy area as retirements loom for Kyger Creek and Clifty Creek.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Coal"}, {"hour":  1, "fuel_type": "Coal"}, {"hour":  2, "fuel_type": "Coal"},
+          {"hour":  3, "fuel_type": "Coal"}, {"hour":  4, "fuel_type": "Coal"}, {"hour":  5, "fuel_type": "Coal"},
+          {"hour":  6, "fuel_type": "Coal"}, {"hour":  7, "fuel_type": "Coal"}, {"hour":  8, "fuel_type": "Coal"},
+          {"hour":  9, "fuel_type": "Coal"}, {"hour": 10, "fuel_type": "Coal"}, {"hour": 11, "fuel_type": "Coal"},
+          {"hour": 12, "fuel_type": "Coal"}, {"hour": 13, "fuel_type": "Coal"}, {"hour": 14, "fuel_type": "Coal"},
+          {"hour": 15, "fuel_type": "Coal"}, {"hour": 16, "fuel_type": "Coal"}, {"hour": 17, "fuel_type": "Coal"},
+          {"hour": 18, "fuel_type": "Coal"}, {"hour": 19, "fuel_type": "Coal"}, {"hour": 20, "fuel_type": "Coal"},
+          {"hour": 21, "fuel_type": "Coal"}, {"hour": 22, "fuel_type": "Coal"}, {"hour": 23, "fuel_type": "Coal"}
+        ]
+      },
+      {
+        "zone": "PECO", "current_fuel": "Gas-CC", "is_fossil": true, "signal_strength": 68,
+        "market_note": "Gas combined-cycle is the price-setter in PECO zone; Philadelphia area demand keeps gas on the margin despite widespread solar.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Gas-CC"}, {"hour":  1, "fuel_type": "Gas-CC"}, {"hour":  2, "fuel_type": "Gas-CC"},
+          {"hour":  3, "fuel_type": "Gas-CC"}, {"hour":  4, "fuel_type": "Gas-CC"}, {"hour":  5, "fuel_type": "Gas-CC"},
+          {"hour":  6, "fuel_type": "Gas-CC"}, {"hour":  7, "fuel_type": "Gas-CC"}, {"hour":  8, "fuel_type": "Gas-CC"},
+          {"hour":  9, "fuel_type": "Gas-CC"}, {"hour": 10, "fuel_type": "Gas-CC"}, {"hour": 11, "fuel_type": "Gas-CC"},
+          {"hour": 12, "fuel_type": "Gas-CC"}, {"hour": 13, "fuel_type": "Gas-CC"}, {"hour": 14, "fuel_type": "Gas-CC"},
+          {"hour": 15, "fuel_type": "Gas-CC"}, {"hour": 16, "fuel_type": "Gas-CC"}, {"hour": 17, "fuel_type": "Gas-CC"},
+          {"hour": 18, "fuel_type": "Gas-CC"}, {"hour": 19, "fuel_type": "Gas-CC"}, {"hour": 20, "fuel_type": "Gas-CC"},
+          {"hour": 21, "fuel_type": "Gas-CC"}, {"hour": 22, "fuel_type": "Gas-CC"}, {"hour": 23, "fuel_type": "Gas-CC"}
+        ]
+      },
+      {
+        "zone": "PENELEC", "current_fuel": "Gas-CC", "is_fossil": true, "signal_strength": 68,
+        "market_note": "Gas combined-cycle is marginal in PENELEC zone in northwest Pennsylvania, with aging coal capacity retired since 2023.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Gas-CC"}, {"hour":  1, "fuel_type": "Gas-CC"}, {"hour":  2, "fuel_type": "Gas-CC"},
+          {"hour":  3, "fuel_type": "Gas-CC"}, {"hour":  4, "fuel_type": "Gas-CC"}, {"hour":  5, "fuel_type": "Gas-CC"},
+          {"hour":  6, "fuel_type": "Gas-CC"}, {"hour":  7, "fuel_type": "Gas-CC"}, {"hour":  8, "fuel_type": "Gas-CC"},
+          {"hour":  9, "fuel_type": "Gas-CC"}, {"hour": 10, "fuel_type": "Gas-CC"}, {"hour": 11, "fuel_type": "Gas-CC"},
+          {"hour": 12, "fuel_type": "Gas-CC"}, {"hour": 13, "fuel_type": "Gas-CC"}, {"hour": 14, "fuel_type": "Gas-CC"},
+          {"hour": 15, "fuel_type": "Gas-CC"}, {"hour": 16, "fuel_type": "Gas-CC"}, {"hour": 17, "fuel_type": "Gas-CC"},
+          {"hour": 18, "fuel_type": "Gas-CC"}, {"hour": 19, "fuel_type": "Gas-CC"}, {"hour": 20, "fuel_type": "Gas-CC"},
+          {"hour": 21, "fuel_type": "Gas-CC"}, {"hour": 22, "fuel_type": "Gas-CC"}, {"hour": 23, "fuel_type": "Gas-CC"}
+        ]
+      },
+      {
+        "zone": "PEPCO", "current_fuel": "Solar", "is_fossil": false, "signal_strength": 82,
+        "market_note": "DC-area solar is flooding the PEPCO zone, creating negative spreads between Real-Time and Day-Ahead pricing.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Gas-CC"}, {"hour":  1, "fuel_type": "Gas-CC"}, {"hour":  2, "fuel_type": "Gas-CC"},
+          {"hour":  3, "fuel_type": "Gas-CC"}, {"hour":  4, "fuel_type": "Gas-CC"}, {"hour":  5, "fuel_type": "Gas-CC"},
+          {"hour":  6, "fuel_type": "Gas-CC"}, {"hour":  7, "fuel_type": "Solar"},  {"hour":  8, "fuel_type": "Solar"},
+          {"hour":  9, "fuel_type": "Solar"},  {"hour": 10, "fuel_type": "Solar"},  {"hour": 11, "fuel_type": "Solar"},
+          {"hour": 12, "fuel_type": "Solar"},  {"hour": 13, "fuel_type": "Solar"},  {"hour": 14, "fuel_type": "Solar"},
+          {"hour": 15, "fuel_type": "Solar"},  {"hour": 16, "fuel_type": "Solar"},  {"hour": 17, "fuel_type": "Gas-CC"},
+          {"hour": 18, "fuel_type": "Gas-CC"}, {"hour": 19, "fuel_type": "Gas-CC"}, {"hour": 20, "fuel_type": "Gas-CC"},
+          {"hour": 21, "fuel_type": "Gas-CC"}, {"hour": 22, "fuel_type": "Gas-CC"}, {"hour": 23, "fuel_type": "Gas-CC"}
+        ]
+      },
+      {
+        "zone": "PJM-RTO", "current_fuel": "Solar", "is_fossil": false, "signal_strength": 82,
+        "market_note": "Systemwide solar penetration is at 38.5% of load, making it the dominant marginal fuel for PJM's 13:00 EPT interval.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Gas-CC"}, {"hour":  1, "fuel_type": "Gas-CC"}, {"hour":  2, "fuel_type": "Gas-CC"},
+          {"hour":  3, "fuel_type": "Gas-CC"}, {"hour":  4, "fuel_type": "Gas-CC"}, {"hour":  5, "fuel_type": "Gas-CC"},
+          {"hour":  6, "fuel_type": "Gas-CC"}, {"hour":  7, "fuel_type": "Solar"},  {"hour":  8, "fuel_type": "Solar"},
+          {"hour":  9, "fuel_type": "Solar"},  {"hour": 10, "fuel_type": "Solar"},  {"hour": 11, "fuel_type": "Solar"},
+          {"hour": 12, "fuel_type": "Solar"},  {"hour": 13, "fuel_type": "Solar"},  {"hour": 14, "fuel_type": "Solar"},
+          {"hour": 15, "fuel_type": "Solar"},  {"hour": 16, "fuel_type": "Solar"},  {"hour": 17, "fuel_type": "Gas-CC"},
+          {"hour": 18, "fuel_type": "Gas-CC"}, {"hour": 19, "fuel_type": "Gas-CC"}, {"hour": 20, "fuel_type": "Gas-CC"},
+          {"hour": 21, "fuel_type": "Gas-CC"}, {"hour": 22, "fuel_type": "Gas-CC"}, {"hour": 23, "fuel_type": "Gas-CC"}
+        ]
+      },
+      {
+        "zone": "PPL", "current_fuel": "Solar", "is_fossil": false, "signal_strength": 82,
+        "market_note": "Solar is price-setting across the PPL zone in eastern Pennsylvania, with RT prices running $22/MWh below Day-Ahead.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Gas-CC"}, {"hour":  1, "fuel_type": "Gas-CC"}, {"hour":  2, "fuel_type": "Gas-CC"},
+          {"hour":  3, "fuel_type": "Gas-CC"}, {"hour":  4, "fuel_type": "Gas-CC"}, {"hour":  5, "fuel_type": "Gas-CC"},
+          {"hour":  6, "fuel_type": "Gas-CC"}, {"hour":  7, "fuel_type": "Solar"},  {"hour":  8, "fuel_type": "Solar"},
+          {"hour":  9, "fuel_type": "Solar"},  {"hour": 10, "fuel_type": "Solar"},  {"hour": 11, "fuel_type": "Solar"},
+          {"hour": 12, "fuel_type": "Solar"},  {"hour": 13, "fuel_type": "Solar"},  {"hour": 14, "fuel_type": "Solar"},
+          {"hour": 15, "fuel_type": "Solar"},  {"hour": 16, "fuel_type": "Solar"},  {"hour": 17, "fuel_type": "Gas-CC"},
+          {"hour": 18, "fuel_type": "Gas-CC"}, {"hour": 19, "fuel_type": "Gas-CC"}, {"hour": 20, "fuel_type": "Gas-CC"},
+          {"hour": 21, "fuel_type": "Gas-CC"}, {"hour": 22, "fuel_type": "Gas-CC"}, {"hour": 23, "fuel_type": "Gas-CC"}
+        ]
+      },
+      {
+        "zone": "PSEG", "current_fuel": "Gas-CC", "is_fossil": true, "signal_strength": 68,
+        "market_note": "Natural gas combined-cycle units are the marginal price-setters in PSEG zone; congestion limits flow from solar-rich areas.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Gas-CC"}, {"hour":  1, "fuel_type": "Gas-CC"}, {"hour":  2, "fuel_type": "Gas-CC"},
+          {"hour":  3, "fuel_type": "Gas-CC"}, {"hour":  4, "fuel_type": "Gas-CC"}, {"hour":  5, "fuel_type": "Gas-CC"},
+          {"hour":  6, "fuel_type": "Gas-CC"}, {"hour":  7, "fuel_type": "Gas-CC"}, {"hour":  8, "fuel_type": "Gas-CC"},
+          {"hour":  9, "fuel_type": "Gas-CC"}, {"hour": 10, "fuel_type": "Gas-CC"}, {"hour": 11, "fuel_type": "Gas-CC"},
+          {"hour": 12, "fuel_type": "Gas-CC"}, {"hour": 13, "fuel_type": "Gas-CC"}, {"hour": 14, "fuel_type": "Gas-CC"},
+          {"hour": 15, "fuel_type": "Gas-CC"}, {"hour": 16, "fuel_type": "Gas-CC"}, {"hour": 17, "fuel_type": "Gas-CC"},
+          {"hour": 18, "fuel_type": "Gas-CC"}, {"hour": 19, "fuel_type": "Gas-CC"}, {"hour": 20, "fuel_type": "Gas-CC"},
+          {"hour": 21, "fuel_type": "Gas-CC"}, {"hour": 22, "fuel_type": "Gas-CC"}, {"hour": 23, "fuel_type": "Gas-CC"}
+        ]
+      },
+      {
+        "zone": "RECO", "current_fuel": "Gas-CC", "is_fossil": true, "signal_strength": 68,
+        "market_note": "Natural gas is the marginal fuel in RECO zone — congestion at the Raritan Valley interface creates a $23/MWh premium over adjacent zones.",
+        "timeline_24h": [
+          {"hour":  0, "fuel_type": "Gas-CC"}, {"hour":  1, "fuel_type": "Gas-CC"}, {"hour":  2, "fuel_type": "Gas-CC"},
+          {"hour":  3, "fuel_type": "Gas-CC"}, {"hour":  4, "fuel_type": "Gas-CC"}, {"hour":  5, "fuel_type": "Gas-CC"},
+          {"hour":  6, "fuel_type": "Gas-CC"}, {"hour":  7, "fuel_type": "Gas-CC"}, {"hour":  8, "fuel_type": "Gas-CC"},
+          {"hour":  9, "fuel_type": "Gas-CC"}, {"hour": 10, "fuel_type": "Gas-CC"}, {"hour": 11, "fuel_type": "Gas-CC"},
+          {"hour": 12, "fuel_type": "Gas-CC"}, {"hour": 13, "fuel_type": "Gas-CC"}, {"hour": 14, "fuel_type": "Gas-CC"},
+          {"hour": 15, "fuel_type": "Gas-CC"}, {"hour": 16, "fuel_type": "Gas-CC"}, {"hour": 17, "fuel_type": "Gas-CC"},
+          {"hour": 18, "fuel_type": "Gas-CC"}, {"hour": 19, "fuel_type": "Gas-CC"}, {"hour": 20, "fuel_type": "Gas-CC"},
+          {"hour": 21, "fuel_type": "Gas-CC"}, {"hour": 22, "fuel_type": "Gas-CC"}, {"hour": 23, "fuel_type": "Gas-CC"}
+        ]
+      }
+    ],
+    "summary": {
+      "total_zones": 22,
+      "snapshot_hour_ept": 13,
+      "dominant_fuel": "Solar",
+      "fossil_zone_count": 9,
+      "renewable_zone_count": 10
+    }
+  },
+
+  "resource_gap": {
+    "meta": {
+      "api_version": "1.0",
+      "is_demo": true,
+      "zone": "ALL",
+      "start": "2024-01-01T00:00:00-05:00",
+      "end": "2028-12-31T23:59:59-05:00",
+      "timezone": "America/New_York",
+      "last_updated_ept": "2025-06-15T13:00:00-04:00",
+      "units": "MW",
+      "data_quality": "DEMO"
+    },
+    "data": [
+      {
+        "zone": "BGE", "retiring_mw": 1847.3, "total_queue_mw": 8240.0, "adjusted_queue_mw": 1433.76,
+        "avg_elcc": 0.325, "elcc_adjusted_mw": 465.97, "retirement_deficit_mw": 1381.33,
+        "reliability_score": 9,
+        "investment_signal": "Critical capacity gap in BGE zone after Brandon Shores and Crane retirement. 1,381 MW deficit even accounting for replacement queue. High-value siting for Gas-CC or grid-scale Storage.",
+        "key_retirements": ["Brandon Shores CP1/CP2 — 1,287 MW (coal, 2025)", "Chesapeake C&D — 560 MW (coal, 2025)"],
+        "queue_success_rate": 0.174
+      },
+      {
+        "zone": "AEP", "retiring_mw": 4218.6, "total_queue_mw": 12480.0, "adjusted_queue_mw": 2171.52,
+        "avg_elcc": 0.28, "elcc_adjusted_mw": 608.03, "retirement_deficit_mw": 3610.57,
+        "reliability_score": 9,
+        "investment_signal": "Severe Appalachian capacity shortfall — 3,611 MW gap as Ohio/Indiana coal retires. Dispatchable peakers or CCGT most urgently needed before 2027.",
+        "key_retirements": ["Cardinal — 2,870 MW (coal, 2027)", "Amos — 2,900 MW (coal, 2026)"],
+        "queue_success_rate": 0.174
+      },
+      {
+        "zone": "COMED", "retiring_mw": 1842.4, "total_queue_mw": 38420.0, "adjusted_queue_mw": 6685.08,
+        "avg_elcc": 0.274, "elcc_adjusted_mw": 1831.71, "retirement_deficit_mw": 10.69,
+        "reliability_score": 4,
+        "investment_signal": "COMED zone near capacity balance. Large Midwest renewable queue partially offsets retirements; dispatchable backup is needed for low-wind, dark periods.",
+        "key_retirements": ["Waukegan — 671 MW (coal, 2023)", "Will County — 828 MW (coal, 2022)"],
+        "queue_success_rate": 0.174
+      },
+      {
+        "zone": "DOM", "retiring_mw": 2847.3, "total_queue_mw": 22180.0, "adjusted_queue_mw": 3859.32,
+        "avg_elcc": 0.4015, "elcc_adjusted_mw": 1549.52, "retirement_deficit_mw": 1297.78,
+        "reliability_score": 7,
+        "investment_signal": "Growing capacity risk in DOM zone. Virginia offshore wind is a key hedge but deliverability constraints and nuclear retirements widen the gap.",
+        "key_retirements": ["Chesterfield — 1,349 MW (coal, 2024)", "Possum Point — 617 MW (oil, 2024)"],
+        "queue_success_rate": 0.174
+      },
+      {
+        "zone": "DUQ", "retiring_mw": 824.7, "total_queue_mw": 3240.0, "adjusted_queue_mw": 563.76,
+        "avg_elcc": 0.484, "elcc_adjusted_mw": 272.86, "retirement_deficit_mw": 551.84,
+        "reliability_score": 7,
+        "investment_signal": "DUQ zone faces moderate deficit as Cheswick retires. Limited queue depth makes Gas-CC or pumped storage the most impactful investment.",
+        "key_retirements": ["Cheswick — 636 MW (coal, 2025)"],
+        "queue_success_rate": 0.174
+      },
+      {
+        "zone": "PSEG", "retiring_mw": 1248.6, "total_queue_mw": 7840.0, "adjusted_queue_mw": 1364.16,
+        "avg_elcc": 0.424, "elcc_adjusted_mw": 578.41, "retirement_deficit_mw": 670.19,
+        "reliability_score": 7,
+        "investment_signal": "PSEG zone capacity tightening as aging gas-fired plants retire. Offshore Wind development is critical for long-term reliability in the NJ corridor.",
+        "key_retirements": ["Hudson — 628 MW (gas, 2026)", "Sewaren — 464 MW (gas, 2025)"],
+        "queue_success_rate": 0.174
+      },
+      {
+        "zone": "PENELEC", "retiring_mw": 1482.4, "total_queue_mw": 4820.0, "adjusted_queue_mw": 838.68,
+        "avg_elcc": 0.313, "elcc_adjusted_mw": 262.51, "retirement_deficit_mw": 1219.89,
+        "reliability_score": 8,
+        "investment_signal": "PENELEC zone carries high retirement risk — 1,482 MW of coal retiring through 2028. Remote area limits build opportunity; Storage and Gas-CT most favored.",
+        "key_retirements": ["Keystone — 1,872 MW (coal, 2028)", "Conemaugh — 1,872 MW (coal, 2028)"],
+        "queue_success_rate": 0.174
+      },
+      {
+        "zone": "OVEC", "retiring_mw": 1248.2, "total_queue_mw": 2840.0, "adjusted_queue_mw": 494.16,
+        "avg_elcc": 0.328, "elcc_adjusted_mw": 162.08, "retirement_deficit_mw": 1086.12,
+        "reliability_score": 8,
+        "investment_signal": "OVEC zone faces large capacity gap as Kyger Creek and Clifty Creek retire. Small queue and limited transmission create systemic reliability risk.",
+        "key_retirements": ["Kyger Creek — 1,086 MW (coal, 2026)", "Clifty Creek — 1,250 MW (coal, 2026)"],
+        "queue_success_rate": 0.174
+      },
+      {
+        "zone": "PJM-RTO", "retiring_mw": 40248.6, "total_queue_mw": 292460.0, "adjusted_queue_mw": 50888.04,
+        "avg_elcc": 0.395, "elcc_adjusted_mw": 20100.78, "retirement_deficit_mw": 20147.82,
+        "reliability_score": 8,
+        "investment_signal": "PJM system faces a 20+ GW capacity gap by 2028. Renewable queue growth is insufficient on a capacity-credit basis. Dispatchable investment is critical before 2027-2028 auction settlements.",
+        "key_retirements": ["13.2 GW coal through 2028", "7.4 GW oil/gas through 2028", "2.1 GW nuclear through 2028"],
+        "queue_success_rate": 0.174
+      }
+    ],
+    "summary": {
+      "total_zones": 9,
+      "critical_zones": 8,
+      "total_deficit_mw": 29976.23,
+      "queue_success_rate": 0.174,
+      "most_at_risk_zone": "BGE",
+      "system_reliability_score": 8
+    }
+  },
+
+  "sync_status": {
+    "mode": "demo",
+    "snapshot_timestamp": "2025-06-15T13:00:00-04:00",
+    "demo_mode_active": true,
+    "message": "GridAlpha Demo Mode active — serving deterministic demo snapshot. Scenario: high renewable penetration, solar flooding midday (2025-06-15 13:00 EPT). No live API calls were made.",
+    "data_sources": [
+      {"name": "PJM Generation by Fuel",        "endpoint": "/generation",        "status": "DEMO", "last_updated": "2025-06-15T13:00:00-04:00", "latency_ms": null},
+      {"name": "PJM Real-Time LMP",              "endpoint": "/lmp",               "status": "DEMO", "last_updated": "2025-06-15T13:00:00-04:00", "latency_ms": null},
+      {"name": "Spark Spread (LMP + Henry Hub)", "endpoint": "/spark-spread",      "status": "DEMO", "last_updated": "2025-06-15T13:00:00-04:00", "latency_ms": null},
+      {"name": "Battery Storage Arbitrage",      "endpoint": "/battery-arbitrage", "status": "DEMO", "last_updated": "2025-06-15T13:00:00-04:00", "latency_ms": null},
+      {"name": "DA/RT LMP Convergence",          "endpoint": "/api/convergence",   "status": "DEMO", "last_updated": "2025-06-15T13:00:00-04:00", "latency_ms": null},
+      {"name": "NOAA Weather + PJM Load",        "endpoint": "/weather",           "status": "DEMO", "last_updated": "2025-06-15T13:00:00-04:00", "latency_ms": null},
+      {"name": "Marginal Fuel (Simulated)",      "endpoint": "/api/marginal-fuel", "status": "DEMO", "last_updated": "2025-06-15T13:00:00-04:00", "latency_ms": null},
+      {"name": "Resource Adequacy Gap",          "endpoint": "/api/resource-gap",  "status": "DEMO", "last_updated": "2025-06-15T13:00:00-04:00", "latency_ms": null}
+    ]
+  }
+}
