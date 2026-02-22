@@ -38,7 +38,7 @@ export default function BatteryArbitrage({ selectedZone, setSelectedZone }: Batt
 	const fetchBatteryData = async () => {
   try {
     const response = await fetch(
-      `http://localhost:8000/battery-arbitrage?zone=${selectedZone}&efficiency=${efficiency / 100}&n_charge_hours=4&n_discharge_hours=4`
+      `https://gridalpha-production.up.railway.app/battery-arbitrage?zone=${selectedZone}&efficiency=${efficiency / 100}&n_charge_hours=4&n_discharge_hours=4`
     );
     if (!response.ok) {
       throw new Error('API request failed');

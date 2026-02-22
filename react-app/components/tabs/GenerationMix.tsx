@@ -31,11 +31,11 @@ export default function GenerationMix() {
 	setError(false);
 
 	try {
-  const genResponse = await fetch('http://localhost:8000/generation');
+  const genResponse = await fetch('https://gridalpha-production.up.railway.app/generation');
   if (!genResponse.ok) throw new Error('Generation API failed');
   const genResult = await genResponse.json();
 
-  const weatherResponse = await fetch('http://localhost:8000/weather?zone=BGE');
+  const weatherResponse = await fetch('https://gridalpha-production.up.railway.app/weather?zone=BGE');
   if (!weatherResponse.ok) throw new Error('Weather API failed');
   const weatherResult = await weatherResponse.json();
 

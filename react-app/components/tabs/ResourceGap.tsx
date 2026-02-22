@@ -36,7 +36,7 @@ export default function ResourceGap({ selectedZone, setSelectedZone }: ResourceG
   useEffect(() => {
 	const fetchResourceGapData = async () => {
   try {
-    const response = await fetch(`http://localhost:8000/api/resource-gap?zone=${selectedZone}`);
+    const response = await fetch(`https://gridalpha-production.up.railway.app/api/resource-gap?zone=${selectedZone}`);
     if (!response.ok) {
       throw new Error('API request failed');
     }

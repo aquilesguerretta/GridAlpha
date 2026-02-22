@@ -35,7 +35,7 @@ export default function MarginalFuel({ selectedZone, setSelectedZone }: Marginal
   useEffect(() => {
 	const fetchMarginalFuel = async () => {
   try {
-    const response = await fetch(`http://localhost:8000/api/marginal-fuel?zone=${selectedZone}`);
+    const response = await fetch(`https://gridalpha-production.up.railway.app/api/marginal-fuel?zone=${selectedZone}`);
     if (!response.ok) {
       throw new Error('API request failed');
     }

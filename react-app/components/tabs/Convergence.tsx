@@ -41,7 +41,7 @@ export default function Convergence({ selectedZone, setSelectedZone }: Convergen
   useEffect(() => {
 	const fetchConvergenceData = async () => {
   try {
-    const response = await fetch(`http://localhost:8000/api/convergence?zone=${selectedZone}`);
+    const response = await fetch(`https://gridalpha-production.up.railway.app/api/convergence?zone=${selectedZone}`);
     if (!response.ok) {
       throw new Error('API request failed');
     }

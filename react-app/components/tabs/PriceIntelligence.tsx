@@ -47,7 +47,7 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
   useEffect(() => {
 	const fetchLMPData = async () => {
   try {
-    const response = await fetch(`http://localhost:8000/lmp?zone=${selectedZone}`);
+    const response = await fetch(`https://gridalpha-production.up.railway.app/lmp?zone=${selectedZone}`);
     if (!response.ok) {
       throw new Error('API request failed');
     }
@@ -79,7 +79,7 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
   useEffect(() => {
 	const fetchWeatherData = async () => {
   try {
-    const response = await fetch(`http://localhost:8000/weather?zone=${selectedZone}`);
+    const response = await fetch(`https://gridalpha-production.up.railway.app/weather?zone=${selectedZone}`);
     if (!response.ok) {
       throw new Error('API request failed');
     }

@@ -20,7 +20,7 @@ export default function SparkSpread() {
 	const fetchSparkSpread = async () => {
   try {
     const response = await fetch(
-      `http://localhost:8000/spark-spread?heat_rate=${heatRate}&gas_price=${gasPrice}`
+      `https://gridalpha-production.up.railway.app/spark-spread?heat_rate=${heatRate}&gas_price=${gasPrice}`
     );
     if (!response.ok) {
       throw new Error('API request failed');
