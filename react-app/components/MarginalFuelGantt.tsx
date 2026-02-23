@@ -3,17 +3,26 @@ import { Card } from '@/react-app/components/ui/card';
 interface MarginalFuelGanttProps {
   timeline: Array<{
     hour: number;
-    fuel_type: 'Nuclear' | 'Coal' | 'Gas' | 'Wind' | 'Solar';
+    fuel_type: string;
   }>;
 }
 
-const fuelColors = {
-  Nuclear: '#8b5cf6', // Purple
-  Coal: '#6b7280', // Gray
-  Gas: '#f97316', // Orange
-  Wind: '#10b981', // Green
-  Solar: '#eab308', // Yellow
+// Map by fuel name string so colors are consistent regardless of data order
+const fuelColorMap: Record<string, string> = {
+  Nuclear: '#8b5cf6',  // Purple
+  Coal: '#6b7280',     // Gray
+  'Gas-CC': '#f97316', // Orange
+  'Gas-CT': '#fbbf24', // Amber
+  Wind: '#10b981',     // Green
+  Solar: '#eab308',    // Yellow
+  Hydro: '#60a5fa',    // Blue
 };
+
+function getFuelColor(fuelType: string): string {
+  return fuelColorMap[fuelType] ?? fuelColorMap['Gas-CC'];
+}
+
+const LEGEND_ORDER = ['Nuclear', 'Coal', 'Gas-CC', 'Gas-CT', 'Wind', 'Solar', 'Hydro'] as const;
 
 export default function MarginalFuelGantt({ timeline }: MarginalFuelGanttProps) {
   return (
@@ -47,7 +56,7 @@ export default function MarginalFuelGantt({ timeline }: MarginalFuelGanttProps) 
               <div
                 key={item.hour}
                 className="flex-1 h-16 relative group cursor-pointer transition-all hover:brightness-110"
-                style={{ backgroundColor: fuelColors[item.fuel_type] }}
+                style={{ backgroundColor: getFuelColor(item.fuel_type) }}
                 title={`${item.hour}:00 - ${item.fuel_type}`}
               >
                 {/* Tooltip on hover */}
@@ -61,11 +70,11 @@ export default function MarginalFuelGantt({ timeline }: MarginalFuelGanttProps) 
 
         {/* Legend */}
         <div className="flex flex-wrap gap-4 pt-2 border-t border-border">
-          {Object.entries(fuelColors).map(([fuel, color]) => (
+          {LEGEND_ORDER.map((fuel) => (
             <div key={fuel} className="flex items-center gap-2">
               <div
                 className="w-4 h-4 rounded"
-                style={{ backgroundColor: color }}
+                style={{ backgroundColor: fuelColorMap[fuel] }}
               />
               <span className="text-sm text-muted-foreground">{fuel}</span>
             </div>
