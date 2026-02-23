@@ -2,6 +2,7 @@ import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import HomePage from "@/react-app/pages/Home";
 import PriceIntelligence from "@/react-app/pages/PriceIntelligence";
+import ErrorBoundary from "@/react-app/components/ErrorBoundary";
 import SparkSpread from "@/react-app/pages/SparkSpread";
 import BatteryArbitrage from "@/react-app/pages/BatteryArbitrage";
 import MarginalFuel from "@/react-app/pages/MarginalFuel";
@@ -24,7 +25,7 @@ export default function App() {
         <main className="container mx-auto px-6 py-6">
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/pricing" element={<PriceIntelligence selectedZone={selectedZone} setSelectedZone={setSelectedZone} />} />
+            <Route path="/pricing" element={<ErrorBoundary><PriceIntelligence selectedZone={selectedZone} setSelectedZone={setSelectedZone} /></ErrorBoundary>} />
             <Route path="/spark-spread" element={<SparkSpread />} />
             <Route path="/battery-arbitrage" element={<BatteryArbitrage selectedZone={selectedZone} setSelectedZone={setSelectedZone} />} />
             <Route path="/marginal-fuel" element={<MarginalFuel selectedZone={selectedZone} setSelectedZone={setSelectedZone} />} />
