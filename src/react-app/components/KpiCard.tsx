@@ -12,9 +12,9 @@ interface KpiCardProps {
 
 export default function KpiCard({ title, value, unit, trend, icon, subtitle }: KpiCardProps) {
   return (
-    <Card className="p-6 bg-card border-border backdrop-blur-sm overflow-visible">
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
+    <Card className="px-6 pt-8 pb-6 pr-10 bg-card border-border backdrop-blur-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex-1 min-w-0">
           <p className="text-muted-foreground text-sm font-medium mb-2">{title}</p>
           <div className="flex items-baseline gap-2">
             <span className="text-4xl font-bold tracking-tight">{value}</span>
@@ -31,7 +31,7 @@ export default function KpiCard({ title, value, unit, trend, icon, subtitle }: K
           )}
         </div>
         {icon && (
-          <div className="text-primary/20">
+          <div className="text-primary/20 shrink-0 size-10 flex items-center justify-center [&>svg]:size-full [&>svg]:max-w-full [&>svg]:max-h-full">
             {icon}
           </div>
         )}
