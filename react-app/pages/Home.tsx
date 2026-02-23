@@ -32,7 +32,7 @@ export default function Home() {
 
     try {
       // Fetch generation data
-      const genResponse = await fetch('https://gridalpha-production.up.railway.app/generation');
+      const genResponse = await fetch('https://gridalpha-production.up.railway.app/generation?hours=24');
       if (!genResponse.ok) throw new Error('Generation API failed');
       const genResult = await genResponse.json();
 

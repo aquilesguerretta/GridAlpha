@@ -8,8 +8,9 @@ interface GenerationChartProps {
 }
 
 export default function GenerationChart({ data }: GenerationChartProps) {
-  const chartData = data.map(d => ({
+  const chartData = data.map((d, i) => ({
     time: new Date(d.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+    hourLabel: `${i}h`,
     Nuclear: Math.round(d.nuclear),
     Gas: Math.round(d.gas),
     Coal: Math.round(d.coal),
@@ -18,12 +19,15 @@ export default function GenerationChart({ data }: GenerationChartProps) {
     Hydro: Math.round(d.hydro),
     Temperature: d.temperature,
   }));
-  
-  const loadData = data.map(d => ({
+
+  const loadData = data.map((d, i) => ({
     time: new Date(d.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+    hourLabel: `${i}h`,
     Forecast: Math.round(d.load_forecast),
     Actual: Math.round(d.load_actual),
   }));
+
+  const tickInterval = Math.max(0, Math.floor(data.length / 8) - 1);
 
   return (
     <Card className="p-6 bg-card border-border">
@@ -57,10 +61,11 @@ export default function GenerationChart({ data }: GenerationChartProps) {
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
-          <XAxis 
-            dataKey="time" 
+          <XAxis
+            dataKey="hourLabel"
             stroke="hsl(var(--muted-foreground))"
             tick={{ fill: 'hsl(var(--muted-foreground))' }}
+            interval={tickInterval}
           />
           <YAxis 
             yAxisId="left"
@@ -110,11 +115,11 @@ export default function GenerationChart({ data }: GenerationChartProps) {
         <ResponsiveContainer width="100%" height={80}>
           <LineChart data={loadData}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
-            <XAxis 
-              dataKey="time" 
+            <XAxis
+              dataKey="hourLabel"
               stroke="hsl(var(--muted-foreground))"
               tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 10 }}
-              interval={5}
+              interval={tickInterval}
             />
             <YAxis 
               stroke="hsl(var(--muted-foreground))"

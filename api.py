@@ -584,10 +584,10 @@ async def health():
 @app.get("/generation", response_model=GenerationApiResponse, tags=["Generation"])
 async def get_generation(
     hours: int = Query(
-        default=3,
+        default=24,
         ge=1,
         le=168,
-        description="Rolling window in hours (1–168). Ignored when start/end are provided.",
+        description="Rolling window in hours (1–168). Default 24h for full daily view.",
     ),
     start: Optional[str] = Query(
         default=None,
