@@ -1,37 +1,76 @@
-import { Card } from './ui/card';
+import { Card } from '@/react-app/components/ui/card';
 
-const FUEL_COLORS: Record<string, string> = {
-  Gas: '#f97316', Nuclear: '#6366f1', Wind: '#06b6d4',
-  Coal: '#78716c', Solar: '#eab308', Hydro: '#3b82f6', Other: '#a855f7',
-};
-
-interface Props {
-  timeline: Array<{ hour: number; fuel_type: string }>;
+interface MarginalFuelGanttProps {
+  timeline: Array<{
+    hour: number;
+    fuel_type: 'Nuclear' | 'Coal' | 'Gas' | 'Wind' | 'Solar';
+  }>;
 }
 
-export default function MarginalFuelGantt({ timeline }: Props) {
+const fuelColors = {
+  Nuclear: '#8b5cf6', // Purple
+  Coal: '#6b7280', // Gray
+  Gas: '#f97316', // Orange
+  Wind: '#10b981', // Green
+  Solar: '#eab308', // Yellow
+};
+
+export default function MarginalFuelGantt({ timeline }: MarginalFuelGanttProps) {
   return (
-    <Card className="p-6 bg-card border-border">
-      <h3 className="text-lg font-semibold mb-4">24-Hour Marginal Fuel Timeline</h3>
-      <div className="flex h-12 rounded-md overflow-hidden border border-border">
-        {timeline.map((h, i) => (
-          <div
-            key={i}
-            title={`Hour ${h.hour}: ${h.fuel_type}`}
-            className="flex-1 flex items-center justify-center text-xs font-bold text-white/80 cursor-default"
-            style={{ backgroundColor: FUEL_COLORS[h.fuel_type] ?? FUEL_COLORS['Other'] }}
-          >
-            {i % 4 === 0 ? h.fuel_type.slice(0, 3) : ''}
+    <Card className="p-6 bg-card border-border backdrop-blur-sm">
+      <div className="space-y-4">
+        <div>
+          <h3 className="text-lg font-semibold mb-2">24-Hour Merit Order Timeline</h3>
+          <p className="text-sm text-muted-foreground">
+            Fuel type setting marginal price each hour
+          </p>
+        </div>
+
+        {/* Gantt Chart */}
+        <div className="space-y-3">
+          {/* Hour labels */}
+          <div className="flex">
+            {timeline.map((item) => (
+              <div
+                key={item.hour}
+                className="flex-1 text-center text-xs text-muted-foreground"
+                style={{ fontSize: '10px' }}
+              >
+                {item.hour === 0 || item.hour % 3 === 0 ? `${item.hour}h` : ''}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <div className="flex flex-wrap gap-3 mt-3">
-        {Object.entries(FUEL_COLORS).map(([fuel, color]) => (
-          <span key={fuel} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <span className="w-3 h-3 rounded-sm inline-block" style={{ backgroundColor: color }} />
-            {fuel}
-          </span>
-        ))}
+
+          {/* Color blocks */}
+          <div className="flex gap-px rounded-lg overflow-hidden border border-border">
+            {timeline.map((item) => (
+              <div
+                key={item.hour}
+                className="flex-1 h-16 relative group cursor-pointer transition-all hover:brightness-110"
+                style={{ backgroundColor: fuelColors[item.fuel_type] }}
+                title={`${item.hour}:00 - ${item.fuel_type}`}
+              >
+                {/* Tooltip on hover */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 text-white text-xs font-medium">
+                  {item.fuel_type}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Legend */}
+        <div className="flex flex-wrap gap-4 pt-2 border-t border-border">
+          {Object.entries(fuelColors).map(([fuel, color]) => (
+            <div key={fuel} className="flex items-center gap-2">
+              <div
+                className="w-4 h-4 rounded"
+                style={{ backgroundColor: color }}
+              />
+              <span className="text-sm text-muted-foreground">{fuel}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </Card>
   );

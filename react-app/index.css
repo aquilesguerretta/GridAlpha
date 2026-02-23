@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 26% 14%;
+    --foreground: 0 0% 98%;
+    --card: 220 26% 18%;
+    --card-foreground: 0 0% 98%;
+    --popover: 220 26% 16%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 195 100% 50%;
+    --primary-foreground: 220 26% 14%;
+    --secondary: 142 76% 36%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 220 20% 25%;
+    --muted-foreground: 220 10% 65%;
+    --accent: 195 100% 50%;
+    --accent-foreground: 220 26% 14%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 20% 28%;
+    --input: 220 20% 28%;
+    --ring: 195 100% 50%;
+    --radius: 0.5rem;
+    --chart-1: 142 76% 36%;
+    --chart-2: 195 100% 50%;
+    --chart-3: 47 100% 50%;
+    --chart-4: 25 95% 53%;
+    --chart-5: 270 60% 60%;
+    --sidebar: 220 26% 16%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 195 100% 50%;
+    --sidebar-primary-foreground: 220 26% 14%;
+    --sidebar-accent: 220 20% 25%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 220 20% 28%;
+    --sidebar-ring: 195 100% 50%;
+  }
+
+  .dark {
+    --background: 220 26% 14%;
+    --foreground: 0 0% 98%;
+    --card: 220 26% 18%;
+    --card-foreground: 0 0% 98%;
+    --popover: 220 26% 16%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 195 100% 50%;
+    --primary-foreground: 220 26% 14%;
+    --secondary: 142 76% 36%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 220 20% 25%;
+    --muted-foreground: 220 10% 65%;
+    --accent: 195 100% 50%;
+    --accent-foreground: 220 26% 14%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 20% 28%;
+    --input: 220 20% 28%;
+    --ring: 195 100% 50%;
+    --chart-1: 142 76% 36%;
+    --chart-2: 195 100% 50%;
+    --chart-3: 47 100% 50%;
+    --chart-4: 25 95% 53%;
+    --chart-5: 270 60% 60%;
+    --sidebar: 220 26% 16%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 195 100% 50%;
+    --sidebar-primary-foreground: 220 26% 14%;
+    --sidebar-accent: 220 20% 25%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 220 20% 28%;
+    --sidebar-ring: 195 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: "Inter Variable", "Inter", system-ui, sans-serif;
+  }
+
+  button:not([disabled]),
+  [role="button"]:not([disabled]) {
+    cursor: pointer;
+  }
+}

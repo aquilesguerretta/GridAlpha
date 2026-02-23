@@ -1,36 +1,40 @@
-import { ReactNode } from 'react';
+import { Card } from '@/react-app/components/ui/card';
 import { TrendingUp, TrendingDown } from 'lucide-react';
-import { Card } from './ui/card';
 
 interface KpiCardProps {
   title: string;
   value: string;
-  unit?: string;
+  unit: string;
   trend?: number;
-  icon?: ReactNode;
+  icon?: React.ReactNode;
   subtitle?: string;
 }
 
 export default function KpiCard({ title, value, unit, trend, icon, subtitle }: KpiCardProps) {
-  const positive = trend !== undefined && trend >= 0;
   return (
     <Card className="p-6 bg-card border-border backdrop-blur-sm">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <p className="text-muted-foreground text-sm font-medium mb-2">{title}</p>
-          <div className="flex items-baseline gap-2 mb-1">
-            <span className="text-3xl font-bold tracking-tight">{value}</span>
-            {unit && <span className="text-sm text-muted-foreground">{unit}</span>}
+          <div className="flex items-baseline gap-2">
+            <span className="text-4xl font-bold tracking-tight">{value}</span>
+            <span className="text-lg text-muted-foreground">{unit}</span>
           </div>
+          {subtitle && (
+            <p className="text-xs text-muted-foreground mt-1 font-medium">{subtitle}</p>
+          )}
           {trend !== undefined && (
-            <div className={`flex items-center gap-1 text-xs font-medium ${positive ? 'text-emerald-500' : 'text-red-500'}`}>
-              {positive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-              {Math.abs(trend).toFixed(1)}%
+            <div className={`flex items-center gap-1 mt-3 text-sm ${trend >= 0 ? 'text-secondary' : 'text-destructive'}`}>
+              {trend >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+              <span>{Math.abs(trend).toFixed(1)}%</span>
             </div>
           )}
-          {subtitle && <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>}
         </div>
-        {icon && <div className="text-primary/30">{icon}</div>}
+        {icon && (
+          <div className="text-primary/20">
+            {icon}
+          </div>
+        )}
       </div>
     </Card>
   );

@@ -1,36 +1,146 @@
-import { zones } from './lmpData';
-
 export interface ResourceGapData {
   zone: string;
-  reliability_score: number;
-  rmr_status: boolean;
-  current_capacity: number;
-  scheduled_retirements: number;
-  new_projects: number;
-  load_forecast: number;
-  net_position: number;
+  reliability_score: number; // 0-10 scale, >7 is high risk
+  rmr_status: boolean; // Reliability Must Run
+  current_capacity: number; // MW
+  scheduled_retirements: number; // MW (negative)
+  new_projects: number; // MW (positive)
+  load_forecast: number; // MW
+  net_position: number; // MW (positive = surplus, negative = deficit)
   investment_signal: string;
 }
 
-export const resourceGapDataByZone: Record<string, ResourceGapData> = Object.fromEntries(
-  zones.map(z => {
-    const score = Math.floor(Math.random() * 10) + 1;
-    const capacity = 1000 + Math.random() * 2000;
-    const retirements = -(Math.random() * 500);
-    const newProjects = Math.random() * 800;
-    const forecast = capacity * 0.85;
-    return [z.id, {
-      zone:                  z.id,
-      reliability_score:     score,
-      rmr_status:            score > 7,
-      current_capacity:      +capacity.toFixed(0),
-      scheduled_retirements: +retirements.toFixed(0),
-      new_projects:          +newProjects.toFixed(0),
-      load_forecast:         +forecast.toFixed(0),
-      net_position:          +(capacity + retirements + newProjects - forecast).toFixed(0),
-      investment_signal:     score > 7
-        ? `HIGH — ${z.id} faces significant capacity shortfall. Storage and peakers offer strong returns.`
-        : `MODERATE — ${z.id} has manageable retirement risk with adequate queue projects.`,
-    }];
-  })
-);
+export const resourceGapDataByZone: Record<string, ResourceGapData> = {
+  western_hub: {
+    zone: 'Western Hub',
+    reliability_score: 4.2,
+    rmr_status: false,
+    current_capacity: 15800,
+    scheduled_retirements: -1200,
+    new_projects: 2400,
+    load_forecast: 14500,
+    net_position: 2500,
+    investment_signal: 'Balanced supply outlook. Monitor coal retirements scheduled for 2026-2028. Wind additions compensating for thermal exits.',
+  },
+  eastern_hub: {
+    zone: 'Eastern Hub',
+    reliability_score: 5.8,
+    rmr_status: false,
+    current_capacity: 18500,
+    scheduled_retirements: -2100,
+    new_projects: 1800,
+    load_forecast: 17200,
+    net_position: 1000,
+    investment_signal: 'Tightening reserve margin. Offshore wind pipeline may face delays. Consider battery storage or flexible gas capacity.',
+  },
+  aep: {
+    zone: 'AEP Zone',
+    reliability_score: 6.5,
+    rmr_status: false,
+    current_capacity: 12400,
+    scheduled_retirements: -1800,
+    new_projects: 1200,
+    load_forecast: 11400,
+    net_position: 400,
+    investment_signal: 'Marginal surplus. Coal plant closures accelerating. Solar+storage hybrid projects recommended to fill capacity gap.',
+  },
+  aps: {
+    zone: 'APS Zone',
+    reliability_score: 3.8,
+    rmr_status: false,
+    current_capacity: 8200,
+    scheduled_retirements: -400,
+    new_projects: 1600,
+    load_forecast: 7800,
+    net_position: 1600,
+    investment_signal: 'Strong pipeline. Renewable interconnection queue healthy. Focus on ancillary services and frequency regulation assets.',
+  },
+  atsi: {
+    zone: 'ATSI Zone',
+    reliability_score: 7.2,
+    rmr_status: false,
+    current_capacity: 10800,
+    scheduled_retirements: -2400,
+    new_projects: 900,
+    load_forecast: 10500,
+    net_position: -1200,
+    investment_signal: 'Supply Deficit Alert: Significant coal retirements with limited replacement capacity. Alpha opportunity for 4-hour battery storage or peaking gas turbines.',
+  },
+  bge: {
+    zone: 'BGE Zone',
+    reliability_score: 8.4,
+    rmr_status: true,
+    current_capacity: 11200,
+    scheduled_retirements: -2800,
+    new_projects: 800,
+    load_forecast: 10800,
+    net_position: -1600,
+    investment_signal: 'Critical Gap: RMR units retiring. Transmission-constrained zone. Alpha Opportunity: Standalone storage (4-6hr duration) in BGE to mitigate RMR charges and capture arbitrage spreads.',
+  },
+  comed: {
+    zone: 'ComEd Zone',
+    reliability_score: 5.2,
+    rmr_status: false,
+    current_capacity: 22400,
+    scheduled_retirements: -1600,
+    new_projects: 2800,
+    load_forecast: 21000,
+    net_position: 2600,
+    investment_signal: 'Adequate reserves. Strong solar and wind development. Consider demand response aggregation and virtual power plant opportunities.',
+  },
+  dom: {
+    zone: 'Dominion Zone',
+    reliability_score: 3.5,
+    rmr_status: false,
+    current_capacity: 16800,
+    scheduled_retirements: -800,
+    new_projects: 2200,
+    load_forecast: 15400,
+    net_position: 2800,
+    investment_signal: 'Nuclear-heavy baseload provides stability. Offshore wind expansion planned. Low risk, but monitor regulatory changes on nuclear life extensions.',
+  },
+  dpl: {
+    zone: 'DPL Zone',
+    reliability_score: 6.8,
+    rmr_status: false,
+    current_capacity: 7400,
+    scheduled_retirements: -1200,
+    new_projects: 600,
+    load_forecast: 7000,
+    net_position: -200,
+    investment_signal: 'Tight margins. Small zone with limited interconnection. Consider distributed energy resources and microgrid solutions.',
+  },
+  peco: {
+    zone: 'PECO Zone',
+    reliability_score: 7.6,
+    rmr_status: true,
+    current_capacity: 9600,
+    scheduled_retirements: -1800,
+    new_projects: 700,
+    load_forecast: 9200,
+    net_position: -700,
+    investment_signal: 'RMR units supporting local reliability. Philadelphia load center constrained. Alpha Opportunity: Behind-the-meter storage and demand flexibility programs.',
+  },
+  ppl: {
+    zone: 'PPL Zone',
+    reliability_score: 4.8,
+    rmr_status: false,
+    current_capacity: 13200,
+    scheduled_retirements: -1000,
+    new_projects: 1800,
+    load_forecast: 12400,
+    net_position: 1600,
+    investment_signal: 'Balanced outlook. Coal-to-gas transition underway. Monitor capacity auction results for price signals.',
+  },
+  pseg: {
+    zone: 'PSEG Zone',
+    reliability_score: 6.2,
+    rmr_status: false,
+    current_capacity: 14800,
+    scheduled_retirements: -1400,
+    new_projects: 1600,
+    load_forecast: 13800,
+    net_position: 1200,
+    investment_signal: 'Solar penetration high. Consider hybrid solar+storage to capture midday curtailment and evening peak arbitrage.',
+  },
+};

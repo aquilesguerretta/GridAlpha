@@ -1,40 +1,56 @@
-import { Activity } from 'lucide-react';
-import { Card } from './ui/card';
+import { Card } from '@/react-app/components/ui/card';
+import { AlertTriangle } from 'lucide-react';
 
-interface Props {
+interface LoadForecastGaugeProps {
   forecast: number;
   actual: number;
   deviationPct: number;
   isUncertaintyDriver: boolean;
 }
 
-export default function LoadForecastGauge({ forecast, actual, deviationPct, isUncertaintyDriver }: Props) {
-  const positive = deviationPct >= 0;
+export default function LoadForecastGauge({ 
+  forecast, 
+  actual, 
+  deviationPct,
+  isUncertaintyDriver 
+}: LoadForecastGaugeProps) {
+  const gaugeColor = isUncertaintyDriver ? 'bg-red-500' : 'bg-emerald-500';
+  const textColor = isUncertaintyDriver ? 'text-red-500' : 'text-emerald-500';
+  
+  // Calculate gauge fill percentage (0-100%)
+  const gaugeFill = Math.min(100, Math.max(0, 50 + deviationPct * 5));
+
   return (
-    <Card className="p-5 bg-card border-border">
-      <div className="flex items-center gap-3 mb-3">
-        <Activity className="w-5 h-5 text-primary" />
-        <h4 className="text-sm font-semibold">Load Forecast vs Actual</h4>
-        {isUncertaintyDriver && (
-          <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 ml-auto">
-            High Uncertainty
-          </span>
-        )}
-      </div>
-      <div className="space-y-2 text-sm">
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">Forecast</span>
-          <span className="font-semibold">{forecast.toLocaleString()} MW</span>
+    <Card className={`p-4 border-border ${isUncertaintyDriver ? 'bg-red-950/20 border-red-500/50' : 'bg-card'}`}>
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">Load vs Forecast</p>
+          {isUncertaintyDriver && (
+            <AlertTriangle className="w-4 h-4 text-red-500" />
+          )}
         </div>
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">Actual</span>
-          <span className="font-semibold">{actual.toLocaleString()} MW</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">Deviation</span>
-          <span className={`font-bold ${positive ? 'text-emerald-500' : 'text-red-500'}`}>
-            {positive ? '+' : ''}{deviationPct.toFixed(2)}%
-          </span>
+        
+        <div className="space-y-2">
+          <div className="flex items-baseline justify-between">
+            <span className="text-2xl font-bold">{(actual / 1000).toFixed(1)}</span>
+            <span className="text-sm text-muted-foreground">vs {(forecast / 1000).toFixed(1)} GW</span>
+          </div>
+          
+          <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+            <div 
+              className={`h-full ${gaugeColor} transition-all duration-300`}
+              style={{ width: `${gaugeFill}%` }}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between text-xs">
+            <span className={`font-semibold ${textColor}`}>
+              {deviationPct > 0 ? '+' : ''}{deviationPct.toFixed(1)}%
+            </span>
+            {isUncertaintyDriver && (
+              <span className="text-red-500 font-semibold">UNCERTAINTY DRIVER</span>
+            )}
+          </div>
         </div>
       </div>
     </Card>
