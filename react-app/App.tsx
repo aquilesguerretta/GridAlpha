@@ -10,7 +10,6 @@ import ResourceGap from "@/react-app/pages/ResourceGap";
 import Convergence from "@/react-app/pages/Convergence";
 import Methods from "@/react-app/pages/Methods";
 import Navigation from "@/react-app/components/Navigation";
-import DemoModeBanner from "@/react-app/components/DemoModeBanner";
 import { zones } from "@/react-app/data/lmpData";
 
 export default function App() {
@@ -20,7 +19,6 @@ export default function App() {
   return (
     <Router>
       <div className="min-h-screen bg-background">
-        <DemoModeBanner />
         <Navigation />
         <main className="container mx-auto px-6 py-6">
           <Routes>

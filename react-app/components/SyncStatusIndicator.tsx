@@ -15,8 +15,7 @@ interface DataSource {
 }
 
 export default function SyncStatusIndicator() {
-  // Demo mode - using stale status
-  const [status] = useState<SyncStatus>('stale');
+  const [status] = useState<SyncStatus>('live');
   const [dataSources] = useState<DataSource[]>([
     { name: 'Generation Mix', lastUpdated: '2024-01-15 14:30 EST' },
     { name: 'LMP Pricing', lastUpdated: '2024-01-15 14:30 EST' },

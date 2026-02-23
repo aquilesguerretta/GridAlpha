@@ -8,9 +8,12 @@ interface GenerationChartProps {
 }
 
 export default function GenerationChart({ data }: GenerationChartProps) {
-  const chartData = data.map((d, i) => ({
-    time: new Date(d.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-    hourLabel: `${i}h`,
+  const formatTimeLabel = (ts: string) =>
+    new Date(ts).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
+
+  const chartData = data.map((d) => ({
+    timeLabel: formatTimeLabel(d.timestamp),
+    timestamp: d.timestamp,
     Nuclear: Math.round(d.nuclear),
     Gas: Math.round(d.gas),
     Coal: Math.round(d.coal),
@@ -20,9 +23,9 @@ export default function GenerationChart({ data }: GenerationChartProps) {
     Temperature: d.temperature,
   }));
 
-  const loadData = data.map((d, i) => ({
-    time: new Date(d.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-    hourLabel: `${i}h`,
+  const loadData = data.map((d) => ({
+    timeLabel: formatTimeLabel(d.timestamp),
+    timestamp: d.timestamp,
     Forecast: Math.round(d.load_forecast),
     Actual: Math.round(d.load_actual),
   }));
@@ -62,7 +65,7 @@ export default function GenerationChart({ data }: GenerationChartProps) {
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
           <XAxis
-            dataKey="hourLabel"
+            dataKey="timeLabel"
             stroke="hsl(var(--muted-foreground))"
             tick={{ fill: 'hsl(var(--muted-foreground))' }}
             interval={tickInterval}
@@ -116,7 +119,7 @@ export default function GenerationChart({ data }: GenerationChartProps) {
           <LineChart data={loadData}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
             <XAxis
-              dataKey="hourLabel"
+              dataKey="timeLabel"
               stroke="hsl(var(--muted-foreground))"
               tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 10 }}
               interval={tickInterval}

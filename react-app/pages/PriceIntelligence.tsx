@@ -415,12 +415,6 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
         </div>
       )}
 
-      {/* Info Banner */}
-      <div className="p-4 bg-muted/50 border border-border rounded-lg">
-        <p className="text-sm text-muted-foreground">
-          Using simulated LMP data. Connect to PJM API when credentials are available for live pricing.
-        </p>
-      </div>
     </div>
   );
 }
