@@ -54,17 +54,30 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
 
     const fetchLMPData = async (): Promise<void> => {
       try {
-        const response = await fetch(`https://gridalpha-production.up.railway.app/lmp?zone=${selectedZone}`);
+        // Map our zone ids to API zone names (PJM uses BGE, COMED, PSEG, etc.)
+        const zoneIdToApiName: Record<string, string> = {
+          western_hub: 'PJM-WESTERN_HUB',
+          eastern_hub: 'PJM-EASTERN_HUB',
+          aep: 'AEP', aps: 'APS', atsi: 'ATSI', bge: 'BGE', comed: 'COMED',
+          dom: 'DOM', dpl: 'DPL', peco: 'PECO', ppl: 'PPL', pseg: 'PSEG',
+        };
+        const apiZone = zoneIdToApiName[selectedZone] ?? selectedZone.toUpperCase().replace(/_/g, ' ');
+        const url = `https://gridalpha-production.up.railway.app/lmp?zone=${encodeURIComponent(apiZone)}&snapshot=false&hours=24`;
+        const response = await fetch(url);
         if (!response.ok) throw new Error('API request failed');
         const result = await response.json();
 
-        const mappedData: LMPDataPoint[] = result.data?.map?.((item: Record<string, unknown>) => ({
-          timestamp: String(item.timestamp ?? ''),
-          energy: Number(item.energy_component ?? 0),
-          congestion: Number(item.congestion_component ?? 0),
-          loss: Number(item.loss_component ?? 0),
-          total: Number(item.lmp_total ?? 0),
-        })) ?? [];
+        // Railway API returns: lmp_total, energy_component, congestion_component, loss_component, timestamp
+        const rawData = result.data ?? result.records ?? [];
+        const mappedData: LMPDataPoint[] = Array.isArray(rawData)
+          ? rawData.map((item: Record<string, unknown>) => ({
+              timestamp: String(item.timestamp ?? item.timestamp_ept ?? item.datetime_beginning_ept ?? ''),
+              energy: Number(item.energy_component ?? 0),
+              congestion: Number(item.congestion_component ?? 0),
+              loss: Number(item.loss_component ?? 0),
+              total: Number(item.lmp_total ?? item.total_lmp_rt ?? 0),
+            }))
+          : [];
 
         if (!cancelled) {
           if (Array.isArray(mappedData) && mappedData.length > 0) {
@@ -193,20 +206,19 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
   }
 
   // Null-safe: zoneData and weatherLoadData are confirmed non-null here
-  const safeZoneData = zoneData.length >= 2 ? zoneData : [];
-  const currentLMP = safeZoneData.length > 0 ? safeZoneData[safeZoneData.length - 1] : null;
-  const previousLMP = safeZoneData.length >= 2 ? safeZoneData[safeZoneData.length - 2] : null;
+  const arr = zoneData;
+  const currentLMP = arr.length > 0 ? arr[arr.length - 1] : null;
+  const previousLMP = arr.length >= 2 ? arr[arr.length - 2] : null;
 
   const change = currentLMP && previousLMP ? currentLMP.total - previousLMP.total : 0;
   const changePercent = previousLMP && previousLMP.total !== 0 ? (change / previousLMP.total) * 100 : 0;
 
-  const avgLMP = safeZoneData.length > 0
-    ? safeZoneData.reduce((sum, d) => sum + d.total, 0) / safeZoneData.length
-    : 0;
-  const peakLMP = safeZoneData.length > 0 ? Math.max(...safeZoneData.map((d) => d.total)) : 0;
-  const avgCongestion = safeZoneData.length > 0
-    ? safeZoneData.reduce((sum, d) => sum + d.congestion, 0) / safeZoneData.length
-    : 0;
+  const avgLMP = arr.length > 0 ? arr.reduce((sum, d) => sum + d.total, 0) / arr.length : 0;
+  const peakLMP = arr.length > 0 ? Math.max(...arr.map((d) => d.total)) : 0;
+  const avgCongestion = arr.length > 0 ? arr.reduce((sum, d) => sum + d.congestion, 0) / arr.length : 0;
+
+  // Charts need 2+ points to avoid divide-by-zero; zone KPIs use arr
+  const chartData = arr.length >= 2 ? arr : [];
 
   const selectedZoneName = zones?.find?.(z => z.id === selectedZone)?.name ?? selectedZone;
 
@@ -355,14 +367,14 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
       </Card>
 
       {/* Charts - only render when we have sufficient data to avoid chart crashes */}
-      {safeZoneData.length > 0 && (
+      {chartData.length > 0 && (
         <div className="space-y-6">
           <LMPTimeSeriesChart
-            data={safeZoneData}
+            data={chartData}
             zoneName={selectedZoneName}
             isUncertaintyDriver={weatherLoadData.is_uncertainty_driver}
           />
-          <LMPComponentsChart data={safeZoneData} />
+          <LMPComponentsChart data={chartData} />
         </div>
       )}
 
