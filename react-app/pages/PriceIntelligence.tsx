@@ -45,6 +45,13 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
   const [weatherLoadData, setWeatherLoadData] = useState<WeatherLoadData | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Fetch with 10s timeout — prevents infinite loading when API hangs
+  const fetchWithTimeout = (url: string, ms = 10000): Promise<Response> => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), ms);
+    return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(timeoutId));
+  };
+
   // Fetch data: clear state first on zone change, then fetch both in parallel
   useEffect(() => {
     setZoneData(null);
@@ -63,8 +70,8 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
         };
         const apiZone = zoneIdToApiName[selectedZone] ?? selectedZone.toUpperCase().replace(/_/g, ' ');
         const url = `https://gridalpha-production.up.railway.app/lmp?zone=${encodeURIComponent(apiZone)}&snapshot=false&hours=24`;
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('API request failed');
+        const response = await fetchWithTimeout(url);
+        if (!response.ok) throw new Error(`API request failed: ${response.status} ${response.statusText}`);
         const result = await response.json();
 
         // Railway API returns: lmp_total, energy_component, congestion_component, loss_component, timestamp
@@ -87,7 +94,8 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
             setZoneData(Array.isArray(stub) && stub.length > 0 ? stub : []);
           }
         }
-      } catch {
+      } catch (err) {
+        console.error('[PriceIntelligence] LMP fetch failed:', err);
         if (!cancelled) {
           const stub = stubLmpData[selectedZone];
           setZoneData(Array.isArray(stub) && stub.length > 0 ? stub : []);
@@ -97,7 +105,7 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
 
     const fetchWeatherData = async (): Promise<void> => {
       try {
-        const response = await fetch(`https://gridalpha-production.up.railway.app/weather?zone=${selectedZone}`);
+        const response = await fetchWithTimeout(`https://gridalpha-production.up.railway.app/weather?zone=${selectedZone}`);
         if (!response.ok) throw new Error('API request failed');
         const result = await response.json();
 
@@ -138,7 +146,8 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
             is_uncertainty_driver: false,
           });
         }
-      } catch {
+      } catch (err) {
+        console.error('[PriceIntelligence] Weather fetch failed:', err);
         if (!cancelled) {
           const stub = stubWeatherData[selectedZone];
           setWeatherLoadData(stub ?? {
@@ -154,11 +163,39 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
       }
     };
 
-    void Promise.all([fetchLMPData(), fetchWeatherData()]).finally(() => {
+    void Promise.allSettled([fetchLMPData(), fetchWeatherData()]).then(() => {
       if (!cancelled) setLoading(false);
     });
 
-    return () => { cancelled = true; };
+    // Safety: if fetches hang or take >12s, force loading off and ensure demo data
+    const safetyTimeout = setTimeout(() => {
+      if (!cancelled) {
+        setLoading(false);
+        setZoneData(prev => {
+          if (prev !== null) return prev;
+          const stub = stubLmpData[selectedZone];
+          return Array.isArray(stub) && stub.length > 0 ? stub : [];
+        });
+        setWeatherLoadData(prev => {
+          if (prev !== null) return prev;
+          const stub = stubWeatherData[selectedZone];
+          return stub ?? {
+            temperature: 50,
+            weather_condition: 'cloudy' as const,
+            weather_alert: '',
+            load_forecast: 0,
+            load_actual: 0,
+            load_deviation_pct: 0,
+            is_uncertainty_driver: false,
+          };
+        });
+      }
+    }, 12000);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(safetyTimeout);
+    };
   }, [selectedZone]);
 
   // Loading state: show skeleton until data is ready
