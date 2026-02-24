@@ -1,5 +1,6 @@
 import { Card } from '@/react-app/components/ui/card';
 import { Cloud, Sun, CloudSnow } from 'lucide-react';
+import { formatTempFandC } from '@/react-app/utils/temperature';
 
 interface WeatherCardProps {
   temperature: number;
@@ -26,7 +27,7 @@ export default function WeatherCard({ temperature, condition, alert }: WeatherCa
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-muted-foreground mb-1">Weather</p>
-          <p className="text-3xl font-bold">{temperature}°F</p>
+          <p className="text-3xl font-bold">{formatTempFandC(temperature)}</p>
           <p className="text-xs text-muted-foreground mt-1 capitalize">{condition}</p>
           <p className="text-xs text-muted-foreground">{alert}</p>
         </div>

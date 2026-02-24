@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { DollarSign, TrendingUp, TrendingDown, BarChart3, Activity, Loader2 } from 'lucide-react';
+import { DollarSign, TrendingUp, TrendingDown, BarChart3, Activity } from 'lucide-react';
 import { zones, lmpDataByZone as stubLmpData } from '@/react-app/data/lmpData';
 import { weatherLoadDataByZone as stubWeatherData } from '@/react-app/data/weatherLoadData';
 import LMPTimeSeriesChart from '@/react-app/components/LMPTimeSeriesChart';
@@ -8,7 +8,6 @@ import KpiCard from '@/react-app/components/KpiCard';
 import WeatherCard from '@/react-app/components/WeatherCard';
 import LoadForecastGauge from '@/react-app/components/LoadForecastGauge';
 import { Card } from '@/react-app/components/ui/card';
-import { Skeleton } from '@/react-app/components/ui/skeleton';
 import {
   Select,
   SelectContent,
@@ -60,6 +59,7 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
 
   useEffect(() => {
     if (!railwayReady) return;
+    if (!selectedZone || typeof selectedZone !== 'string' || selectedZone.trim() === '') return;
     setZoneData(null);
     setWeatherLoadData(null);
     setLoading(true);
@@ -225,7 +225,7 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
     return () => clearInterval(id);
   }, []);
 
-  // Loading state: show skeleton until data is ready
+  // Loading state: show skeleton until data is ready (never show numbers until fetch resolves)
   if (loading || zoneData === null || weatherLoadData === null) {
     return (
       <div className="space-y-6">
@@ -257,14 +257,13 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
             </Select>
           </div>
         </div>
-        <div className="flex items-center justify-center py-24">
-          <Loader2 className="w-12 h-12 animate-spin text-muted-foreground" />
-        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-32" />
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+            <div key={i} className="h-32 bg-gray-700 rounded animate-pulse" />
           ))}
         </div>
+        <div className="h-64 bg-gray-700 rounded animate-pulse" />
+        <div className="h-64 bg-gray-700 rounded animate-pulse" />
       </div>
     );
   }

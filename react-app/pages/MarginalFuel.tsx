@@ -30,6 +30,7 @@ interface MarginalFuelProps {
 }
 
 export default function MarginalFuel({ selectedZone, setSelectedZone }: MarginalFuelProps) {
+  const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<MarginalFuelData>(marginalFuelDataByZone[selectedZone]);
 
   const zoneIdToApiName: Record<string, string> = {
@@ -47,6 +48,8 @@ export default function MarginalFuel({ selectedZone, setSelectedZone }: Marginal
   };
 
   useEffect(() => {
+    if (!selectedZone || typeof selectedZone !== 'string' || selectedZone.trim() === '') return;
+    setIsLoading(true);
     const fetchMarginalFuel = async () => {
       try {
         const response = await fetchWithTimeout(`https://gridalpha-production.up.railway.app/api/marginal-fuel?zone=${encodeURIComponent(apiZone)}`);
@@ -55,7 +58,6 @@ export default function MarginalFuel({ selectedZone, setSelectedZone }: Marginal
         }
         const result = await response.json();
         
-        // Find the data for the selected zone from the data array
         const zoneData = result.data?.find((item: MarginalFuelData) => 
           item.zone.toUpperCase() === apiZone ||
           item.zone.toLowerCase() === selectedZone.replace(/_/g, ' ').toLowerCase()
@@ -64,12 +66,12 @@ export default function MarginalFuel({ selectedZone, setSelectedZone }: Marginal
         if (zoneData) {
           setData(zoneData);
         } else {
-          // Fallback to stub data if zone not found
           setData(marginalFuelDataByZone[selectedZone]);
         }
       } catch (error) {
-        // Silently fall back to stub data on error
         setData(marginalFuelDataByZone[selectedZone]);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -92,6 +94,46 @@ export default function MarginalFuel({ selectedZone, setSelectedZone }: Marginal
     marginType = 'RENEWABLE MARGIN';
     bgClass = 'bg-emerald-950/30 border-emerald-500/50';
     textClass = 'text-emerald-500';
+  }
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">Marginal Fuel Identifier</h2>
+            <p className="text-sm text-muted-foreground">
+              Track which fuel type is setting the market price
+            </p>
+          </div>
+          <div className="w-64">
+            <Select value={selectedZone} onValueChange={setSelectedZone}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select zone" />
+              </SelectTrigger>
+              <SelectContent>
+                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">HUBS</div>
+                {zones.slice(0, 2).map((zone) => (
+                  <SelectItem key={zone.id} value={zone.id}>
+                    {zone.name}
+                  </SelectItem>
+                ))}
+                <div className="my-1 border-t border-border"></div>
+                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">ZONES</div>
+                {zones.slice(2).map((zone) => (
+                  <SelectItem key={zone.id} value={zone.id}>
+                    {zone.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="h-32 bg-gray-700 rounded animate-pulse" />
+        <div className="h-24 bg-gray-700 rounded animate-pulse" />
+        <div className="h-64 bg-gray-700 rounded animate-pulse" />
+      </div>
+    );
   }
 
   return (

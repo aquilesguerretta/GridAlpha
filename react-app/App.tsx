@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import { RailwayWarmupProvider } from "@/react-app/contexts/RailwayWarmupContext";
 import HomePage from "@/react-app/pages/Home";
@@ -13,9 +13,22 @@ import Methods from "@/react-app/pages/Methods";
 import Navigation from "@/react-app/components/Navigation";
 import { zones } from "@/react-app/data/lmpData";
 
+const ZONE_STORAGE_KEY = 'gridalpha_zone';
+
+function getInitialZone(): string {
+  const stored = typeof localStorage !== 'undefined' ? localStorage.getItem(ZONE_STORAGE_KEY) : null;
+  const validIds = new Set((zones ?? []).map((z) => z.id));
+  if (stored && validIds.has(stored)) return stored;
+  return zones[0]?.id ?? 'western_hub';
+}
+
 export default function App() {
-  // Global zone selector state shared across all tabs
-  const [selectedZone, setSelectedZone] = useState(zones[0].id);
+  // Global zone selector state shared across all tabs (persisted to localStorage)
+  const [selectedZone, setSelectedZone] = useState(getInitialZone);
+
+  useEffect(() => {
+    localStorage.setItem(ZONE_STORAGE_KEY, selectedZone);
+  }, [selectedZone]);
 
   return (
     <RailwayWarmupProvider>

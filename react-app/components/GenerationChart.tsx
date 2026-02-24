@@ -2,6 +2,7 @@ import { Card } from '@/react-app/components/ui/card';
 import { ComposedChart, Area, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { LineChart, Line as SimpleLine } from 'recharts';
 import { fuelColors, GenerationDataPoint } from '@/react-app/data/generationData';
+import { formatTempFandC } from '@/react-app/utils/temperature';
 
 interface GenerationChartProps {
   data: GenerationDataPoint[];
@@ -92,9 +93,12 @@ export default function GenerationChart({ data }: GenerationChartProps) {
               maxWidth: '300px'
             }}
             labelStyle={{ color: 'hsl(var(--foreground))' }}
-            formatter={(value: unknown) => {
+            formatter={(value: unknown, name: string) => {
               if (value === undefined || value === null) return ['', ''];
               const numVal = typeof value === 'number' ? value : 0;
+              if (name === 'Temperature') {
+                return [formatTempFandC(numVal), ''];
+              }
               return [`${numVal.toLocaleString()} MW`, ''];
             }}
           />

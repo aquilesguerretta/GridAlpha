@@ -12,7 +12,7 @@ const fuelColorMap: Record<string, string> = {
   Nuclear: '#8b5cf6',  // Purple
   Coal: '#6b7280',     // Gray
   'Gas-CC': '#f97316', // Orange
-  'Gas-CT': '#fbbf24', // Amber
+  'Gas-CT': '#d97706', // Dark amber (distinct from Solar yellow)
   Wind: '#10b981',     // Green
   Solar: '#eab308',    // Yellow
   Hydro: '#60a5fa',    // Blue

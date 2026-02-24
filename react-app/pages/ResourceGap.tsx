@@ -31,10 +31,13 @@ interface ResourceGapProps {
 }
 
 export default function ResourceGap({ selectedZone, setSelectedZone }: ResourceGapProps) {
+  const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<ResourceGapData>(stubData[selectedZone]);
 
   // Fetch resource gap data from API
   useEffect(() => {
+    if (!selectedZone || typeof selectedZone !== 'string' || selectedZone.trim() === '') return;
+    setIsLoading(true);
     const fetchResourceGapData = async () => {
       try {
         const response = await fetch(`https://gridalpha-production.up.railway.app/api/resource-gap?zone=${selectedZone}`);
@@ -43,39 +46,74 @@ export default function ResourceGap({ selectedZone, setSelectedZone }: ResourceG
         }
         const result = await response.json();
 
-        // Find the matching zone in the data array
         const zoneRecord = result.data?.find((item: any) => item.zone === selectedZone);
 
         if (zoneRecord) {
-          // Derive rmr_status from reliability_score (boolean)
           const rmrStatus = zoneRecord.reliability_score > 8;
-
-          // Map API fields to component data structure
           const apiData: ResourceGapData = {
             zone: selectedZone,
             reliability_score: zoneRecord.reliability_score,
             rmr_status: rmrStatus,
             current_capacity: zoneRecord.elcc_adjusted_mw,
-            scheduled_retirements: -Math.abs(zoneRecord.retiring_mw), // Ensure negative
+            scheduled_retirements: -Math.abs(zoneRecord.retiring_mw),
             new_projects: zoneRecord.adjusted_queue_mw,
-            net_position: -zoneRecord.retirement_deficit_mw, // Negate the deficit
+            net_position: -zoneRecord.retirement_deficit_mw,
             investment_signal: zoneRecord.investment_signal,
-            load_forecast: stubData[selectedZone].load_forecast, // Keep stub value
+            load_forecast: stubData[selectedZone].load_forecast,
           };
-
           setData(apiData);
         } else {
-          // Fallback to stub data if no matching zone found
           setData(stubData[selectedZone]);
         }
       } catch (error) {
-        // Silently fall back to stub data on error
         setData(stubData[selectedZone]);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchResourceGapData();
   }, [selectedZone]);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">Resource Gap Analysis</h2>
+            <p className="text-sm text-muted-foreground">
+              Capacity adequacy and reliability risk assessment
+            </p>
+          </div>
+          <div className="w-64">
+            <Select value={selectedZone} onValueChange={setSelectedZone}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select zone" />
+              </SelectTrigger>
+              <SelectContent>
+                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">HUBS</div>
+                {zones.slice(0, 2).map((zone) => (
+                  <SelectItem key={zone.id} value={zone.id}>
+                    {zone.name}
+                  </SelectItem>
+                ))}
+                <div className="my-1 border-t border-border"></div>
+                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">ZONES</div>
+                {zones.slice(2).map((zone) => (
+                  <SelectItem key={zone.id} value={zone.id}>
+                    {zone.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="h-40 bg-gray-700 rounded animate-pulse" />
+        <div className="h-64 bg-gray-700 rounded animate-pulse" />
+        <div className="h-24 bg-gray-700 rounded animate-pulse" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

@@ -30,6 +30,7 @@ export default function BatteryArbitrage({ selectedZone, setSelectedZone }: Batt
   const [duration, setDuration] = useState(4);
   const [efficiency, setEfficiency] = useState(87);
   const [cyclingCost, setCyclingCost] = useState(20);
+  const [isLoading, setIsLoading] = useState(true);
   const [batterySchedule, setBatterySchedule] = useState<BatteryAction[]>(
     generateBatterySchedule(duration, cyclingCost, efficiency / 100)
   );
@@ -50,6 +51,8 @@ export default function BatteryArbitrage({ selectedZone, setSelectedZone }: Batt
 
   // Fetch battery arbitrage data from API
   useEffect(() => {
+    if (!selectedZone || typeof selectedZone !== 'string' || selectedZone.trim() === '') return;
+    setIsLoading(true);
     const fetchBatteryData = async () => {
       try {
         const response = await fetchWithTimeout(
@@ -101,12 +104,12 @@ export default function BatteryArbitrage({ selectedZone, setSelectedZone }: Batt
 
           setBatterySchedule(schedule);
         } else {
-          // Fallback to stub data if no matching zone found
           setBatterySchedule(generateBatterySchedule(duration, cyclingCost, efficiency / 100));
         }
       } catch (error) {
-        // Silently fall back to stub data on error
         setBatterySchedule(generateBatterySchedule(duration, cyclingCost, efficiency / 100));
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -141,6 +144,53 @@ export default function BatteryArbitrage({ selectedZone, setSelectedZone }: Batt
     : null;
 
   const selectedZoneName = zones.find(z => z.id === selectedZone)?.name || '';
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">Battery Arbitrage</h2>
+            <p className="text-sm text-muted-foreground">
+              Optimize energy storage operations for maximum profit
+            </p>
+          </div>
+          <div className="w-64">
+            <Select value={selectedZone} onValueChange={setSelectedZone}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select zone" />
+              </SelectTrigger>
+              <SelectContent>
+                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">HUBS</div>
+                {zones.slice(0, 2).map((zone) => (
+                  <SelectItem key={zone.id} value={zone.id}>
+                    {zone.name}
+                  </SelectItem>
+                ))}
+                <div className="my-1 border-t border-border"></div>
+                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">ZONES</div>
+                {zones.slice(2).map((zone) => (
+                  <SelectItem key={zone.id} value={zone.id}>
+                    {zone.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="h-40 bg-gray-700 rounded animate-pulse" />
+          <div className="h-40 bg-gray-700 rounded animate-pulse" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-32 bg-gray-700 rounded animate-pulse" />
+          ))}
+        </div>
+        <div className="h-80 bg-gray-700 rounded animate-pulse" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

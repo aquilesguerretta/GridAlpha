@@ -24,9 +24,9 @@ const FUEL_KEYS = ['nuclear', 'gas', 'coal', 'wind', 'solar', 'hydro', 'storage'
 
 export default function Home() {
   const { ready: railwayReady } = useRailwayWarmup();
-  const [data, setData] = useState<GenerationRecord[]>(sampleData);
-  const [currentGeneration, setCurrentGeneration] = useState(sampleCurrent);
-  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<GenerationRecord[]>([]);
+  const [currentGeneration, setCurrentGeneration] = useState<GenerationRecord | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const cacheRef = useRef<{ data: GenerationRecord[]; current: GenerationRecord } | null>(null);
@@ -126,18 +126,45 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [railwayReady]);
 
-  const totalGeneration = FUEL_KEYS.reduce(
-    (sum, key) => sum + (Number(currentGeneration[key]) || 0),
-    0
-  );
-  
-  // Calculate percentages for each fuel type
-  const coalPercentage = totalGeneration > 0 ? (currentGeneration.coal / totalGeneration * 100) : 0;
-  const gasPercentage = totalGeneration > 0 ? (currentGeneration.gas / totalGeneration * 100) : 0;
-  const hydroPercentage = totalGeneration > 0 ? (currentGeneration.hydro / totalGeneration * 100) : 0;
-  const nuclearPercentage = totalGeneration > 0 ? (currentGeneration.nuclear / totalGeneration * 100) : 0;
-  const windPercentage = totalGeneration > 0 ? (currentGeneration.wind / totalGeneration * 100) : 0;
-  const solarPercentage = totalGeneration > 0 ? (currentGeneration.solar / totalGeneration * 100) : 0;
+  const totalGeneration = currentGeneration
+    ? FUEL_KEYS.reduce((sum, key) => sum + (Number(currentGeneration[key]) || 0), 0)
+    : 0;
+  const coalPercentage = totalGeneration > 0 ? ((currentGeneration?.coal ?? 0) / totalGeneration * 100) : 0;
+  const gasPercentage = totalGeneration > 0 ? ((currentGeneration?.gas ?? 0) / totalGeneration * 100) : 0;
+  const hydroPercentage = totalGeneration > 0 ? ((currentGeneration?.hydro ?? 0) / totalGeneration * 100) : 0;
+  const nuclearPercentage = totalGeneration > 0 ? ((currentGeneration?.nuclear ?? 0) / totalGeneration * 100) : 0;
+  const windPercentage = totalGeneration > 0 ? ((currentGeneration?.wind ?? 0) / totalGeneration * 100) : 0;
+  const solarPercentage = totalGeneration > 0 ? ((currentGeneration?.solar ?? 0) / totalGeneration * 100) : 0;
+
+  const isLoading = loading || !currentGeneration;
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">Generation Mix</h2>
+            <p className="text-sm text-muted-foreground">Real-time fuel source breakdown</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-24 bg-gray-700 rounded animate-pulse" />
+            <Button onClick={fetchData} disabled={loading} variant="outline" size="sm">
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            </Button>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="h-32 bg-gray-700 rounded animate-pulse" />
+          ))}
+        </div>
+        <div className="h-[400px] bg-gray-700 rounded animate-pulse" />
+        <div className="mt-6 text-center text-sm text-muted-foreground">
+          <p>Data updates every 5 minutes • Penn State Energy Business & Finance</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

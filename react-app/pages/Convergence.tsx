@@ -36,10 +36,13 @@ interface ConvergenceProps {
 }
 
 export default function Convergence({ selectedZone, setSelectedZone }: ConvergenceProps) {
+  const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<ConvergenceData>(stubData[selectedZone]);
 
   // Fetch convergence data from API
   useEffect(() => {
+    if (!selectedZone || typeof selectedZone !== 'string' || selectedZone.trim() === '') return;
+    setIsLoading(true);
     const fetchConvergenceData = async () => {
       try {
         const response = await fetch(`https://gridalpha-production.up.railway.app/api/convergence?zone=${selectedZone}`);
@@ -48,7 +51,6 @@ export default function Convergence({ selectedZone, setSelectedZone }: Convergen
         }
         const result = await response.json();
 
-        // Map hourly data from API response
         const mappedHourlyData: HourlyDataPoint[] = result.data?.map((item: any) => ({
           hour: new Date(item.hour).getHours(),
           da_price: item.da_price,
@@ -56,10 +58,7 @@ export default function Convergence({ selectedZone, setSelectedZone }: Convergen
           spread: item.spread,
         })) || [];
 
-        // Calculate cumulative spread by summing all spreads
         const cumulativeSpread = mappedHourlyData.reduce((sum, d) => sum + d.spread, 0);
-
-        // Build the data object from API response
         const apiData: ConvergenceData = {
           cumulative_spread: cumulativeSpread,
           total_scarcity_hours: result.summary?.scarcity_hours || 0,
@@ -72,12 +71,12 @@ export default function Convergence({ selectedZone, setSelectedZone }: Convergen
         if (mappedHourlyData.length > 0) {
           setData(apiData);
         } else {
-          // Fallback to stub data if no data returned
           setData(stubData[selectedZone]);
         }
       } catch (error) {
-        // Silently fall back to stub data on error
         setData(stubData[selectedZone]);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -110,6 +109,51 @@ export default function Convergence({ selectedZone, setSelectedZone }: Convergen
   } else if (avgSpread < -5) {
     marketCondition = 'Persistent Oversupply';
     conditionColor = 'text-red-500';
+  }
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">Convergence Monitor</h2>
+            <p className="text-sm text-muted-foreground">
+              Day-Ahead vs Real-Time price spread analysis
+            </p>
+          </div>
+          <div className="w-64">
+            <Select value={selectedZone} onValueChange={setSelectedZone}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select zone" />
+              </SelectTrigger>
+              <SelectContent>
+                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">HUBS</div>
+                {zones.slice(0, 2).map((zone) => (
+                  <SelectItem key={zone.id} value={zone.id}>
+                    {zone.name}
+                  </SelectItem>
+                ))}
+                <div className="my-1 border-t border-border"></div>
+                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">ZONES</div>
+                {zones.slice(2).map((zone) => (
+                  <SelectItem key={zone.id} value={zone.id}>
+                    {zone.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-32 bg-gray-700 rounded animate-pulse" />
+          ))}
+        </div>
+        <div className="h-24 bg-gray-700 rounded animate-pulse" />
+        <div className="h-64 bg-gray-700 rounded animate-pulse" />
+        <div className="h-64 bg-gray-700 rounded animate-pulse" />
+      </div>
+    );
   }
 
   return (
