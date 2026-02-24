@@ -40,10 +40,13 @@ interface PriceIntelligenceProps {
   setSelectedZone: (zone: string) => void;
 }
 
+const REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+
 export default function PriceIntelligence({ selectedZone, setSelectedZone }: PriceIntelligenceProps) {
   const [zoneData, setZoneData] = useState<LMPDataPoint[] | null>(null);
   const [weatherLoadData, setWeatherLoadData] = useState<WeatherLoadData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshTick, setRefreshTick] = useState(0);
 
   // Fetch with 10s timeout — prevents infinite loading when API hangs
   const fetchWithTimeout = (url: string, ms = 10000): Promise<Response> => {
@@ -76,7 +79,7 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
 
         // Railway API returns: lmp_total, energy_component, congestion_component, loss_component, timestamp
         const rawData = result.data ?? result.records ?? [];
-        const mappedData: LMPDataPoint[] = Array.isArray(rawData)
+        const mapped: LMPDataPoint[] = Array.isArray(rawData)
           ? rawData.map((item: Record<string, unknown>) => ({
               timestamp: String(item.timestamp ?? item.timestamp_ept ?? item.datetime_beginning_ept ?? ''),
               energy: Number(item.energy_component ?? 0),
@@ -85,6 +88,10 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
               total: Number(item.lmp_total ?? item.total_lmp_rt ?? 0),
             }))
           : [];
+        // Sort by timestamp ascending (oldest first) so chart and arr[length-1]=current are deterministic
+        const mappedData = mapped.sort(
+          (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        );
 
         if (!cancelled) {
           if (Array.isArray(mappedData) && mappedData.length > 0) {
@@ -196,7 +203,13 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
       cancelled = true;
       clearTimeout(safetyTimeout);
     };
-  }, [selectedZone]);
+  }, [selectedZone, refreshTick]);
+
+  // Auto-refresh every 5 min (PJM data updates hourly; faster refresh adds noise)
+  useEffect(() => {
+    const id = setInterval(() => setRefreshTick((t) => t + 1), REFRESH_INTERVAL_MS);
+    return () => clearInterval(id);
+  }, []);
 
   // Loading state: show skeleton until data is ready
   if (loading || zoneData === null || weatherLoadData === null) {
@@ -242,7 +255,7 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
     );
   }
 
-  // Null-safe: zoneData and weatherLoadData are confirmed non-null here
+  // Null-safe: zoneData is sorted ascending by timestamp; last = most recent completed hour
   const arr = zoneData;
   const currentLMP = arr.length > 0 ? arr[arr.length - 1] : null;
   const previousLMP = arr.length >= 2 ? arr[arr.length - 2] : null;

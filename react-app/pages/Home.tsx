@@ -78,14 +78,18 @@ export default function Home() {
         else if (fuelType === 'storage') groupedData[timestamp].storage = record.mw;
       });
 
-      // Convert to array and sort by timestamp
+      // Convert to array and sort by timestamp ascending (oldest first) for chart display
       const pivotedData = Object.values(groupedData).sort(
         (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
       );
 
       if (pivotedData.length > 0) {
         setData(pivotedData);
-        setCurrentGeneration(pivotedData[pivotedData.length - 1]);
+        // KPI: always use most recent completed hour (last element when sorted asc)
+        const sortedDesc = [...pivotedData].sort(
+          (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
+        setCurrentGeneration(sortedDesc[0]);
       }
 
       setLastUpdated(new Date().toISOString());
@@ -101,6 +105,8 @@ export default function Home() {
 
   useEffect(() => {
     fetchData();
+    const interval = setInterval(fetchData, 5 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   const totalGeneration = Object.values(currentGeneration)
