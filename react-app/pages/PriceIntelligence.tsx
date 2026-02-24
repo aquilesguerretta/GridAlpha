@@ -93,6 +93,12 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
           (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
         );
 
+        const currentLMPRecord = mappedData.length > 0 ? mappedData[mappedData.length - 1] : null;
+        console.log('RAW LMP RESPONSE:', JSON.stringify(result));
+        console.log('LMP RECORDS COUNT:', (result?.data ?? result?.records ?? []).length);
+        console.log('CURRENT LMP VALUE USED:', currentLMPRecord);
+        console.log('WHICH RECORD IS CURRENT:', JSON.stringify((result?.data ?? result?.records)?.[0]));
+
         if (!cancelled) {
           if (Array.isArray(mappedData) && mappedData.length > 0) {
             setZoneData(mappedData);

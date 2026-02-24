@@ -36,6 +36,14 @@ export default function Home() {
       if (!genResponse.ok) throw new Error('Generation API failed');
       const genResult = await genResponse.json();
 
+      // DEBUG: raw API output for data stability diagnosis
+      const genData = genResult?.data;
+      console.log('RAW GENERATION RESPONSE:', JSON.stringify(genResult));
+      console.log('GENERATION TIMESTAMP:', genResult?.meta?.timestamp);
+      console.log('GENERATION RECORDS COUNT:', genData?.length);
+      console.log('FIRST RECORD:', JSON.stringify(genData?.[0]));
+      console.log('LAST RECORD:', JSON.stringify(genData?.[genData?.length - 1]));
+
       // Fetch weather/load data for BGE zone
       const weatherResponse = await fetch('https://gridalpha-production.up.railway.app/weather?zone=BGE');
       if (!weatherResponse.ok) throw new Error('Weather API failed');
@@ -89,7 +97,9 @@ export default function Home() {
         const sortedDesc = [...pivotedData].sort(
           (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
         );
-        setCurrentGeneration(sortedDesc[0]);
+        const kpiRecord = sortedDesc[0];
+        console.log('GENERATION KPI RECORD USED:', JSON.stringify(kpiRecord));
+        setCurrentGeneration(kpiRecord);
       }
 
       setLastUpdated(new Date().toISOString());
