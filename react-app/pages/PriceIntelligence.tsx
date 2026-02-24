@@ -49,7 +49,7 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
   const [refreshTick, setRefreshTick] = useState(0);
 
   // Fetch with 10s timeout — prevents infinite loading when API hangs
-  const fetchWithTimeout = (url: string, ms = 10000): Promise<Response> => {
+  const fetchWithTimeout = (url: string, ms = 30000): Promise<Response> => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), ms);
     return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(timeoutId));

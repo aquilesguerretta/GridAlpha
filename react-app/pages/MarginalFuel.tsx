@@ -32,10 +32,24 @@ interface MarginalFuelProps {
 export default function MarginalFuel({ selectedZone, setSelectedZone }: MarginalFuelProps) {
   const [data, setData] = useState<MarginalFuelData>(marginalFuelDataByZone[selectedZone]);
 
+  const zoneIdToApiName: Record<string, string> = {
+    western_hub: 'PJM-RTO',
+    eastern_hub: 'PJM-RTO',
+    aep: 'AEP', aps: 'APS', atsi: 'ATSI', bge: 'BGE', comed: 'COMED',
+    dom: 'DOM', dpl: 'DPL', peco: 'PECO', ppl: 'PPL', pseg: 'PSEG',
+  };
+  const apiZone = zoneIdToApiName[selectedZone] ?? selectedZone.toUpperCase().replace(/_/g, '-');
+
+  const fetchWithTimeout = (url: string, ms = 30000) => {
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), ms);
+    return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(t));
+  };
+
   useEffect(() => {
     const fetchMarginalFuel = async () => {
       try {
-        const response = await fetch(`https://gridalpha-production.up.railway.app/api/marginal-fuel?zone=${selectedZone}`);
+        const response = await fetchWithTimeout(`https://gridalpha-production.up.railway.app/api/marginal-fuel?zone=${encodeURIComponent(apiZone)}`);
         if (!response.ok) {
           throw new Error('API request failed');
         }
@@ -43,8 +57,8 @@ export default function MarginalFuel({ selectedZone, setSelectedZone }: Marginal
         
         // Find the data for the selected zone from the data array
         const zoneData = result.data?.find((item: MarginalFuelData) => 
-          item.zone.toLowerCase() === selectedZone.replace('_', ' ').toLowerCase() ||
-          item.zone === selectedZone
+          item.zone.toUpperCase() === apiZone ||
+          item.zone.toLowerCase() === selectedZone.replace(/_/g, ' ').toLowerCase()
         );
         
         if (zoneData) {
@@ -60,7 +74,7 @@ export default function MarginalFuel({ selectedZone, setSelectedZone }: Marginal
     };
 
     fetchMarginalFuel();
-  }, [selectedZone]);
+  }, [selectedZone, apiZone]);
 
   // Determine margin type and theme
   const isNuclear = data.current_fuel.toLowerCase().includes('nuclear');

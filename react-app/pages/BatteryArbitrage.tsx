@@ -34,12 +34,26 @@ export default function BatteryArbitrage({ selectedZone, setSelectedZone }: Batt
     generateBatterySchedule(duration, cyclingCost, efficiency / 100)
   );
 
+  const zoneIdToApiName: Record<string, string> = {
+    western_hub: 'PJM-WESTERN_HUB',
+    eastern_hub: 'PJM-EASTERN_HUB',
+    aep: 'AEP', aps: 'APS', atsi: 'ATSI', bge: 'BGE', comed: 'COMED',
+    dom: 'DOM', dpl: 'DPL', peco: 'PECO', ppl: 'PPL', pseg: 'PSEG',
+  };
+  const apiZone = zoneIdToApiName[selectedZone] ?? selectedZone.toUpperCase().replace(/_/g, '-');
+
+  const fetchWithTimeout = (url: string, ms = 30000) => {
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), ms);
+    return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(t));
+  };
+
   // Fetch battery arbitrage data from API
   useEffect(() => {
     const fetchBatteryData = async () => {
       try {
-        const response = await fetch(
-          `https://gridalpha-production.up.railway.app/battery-arbitrage?zone=${selectedZone}&efficiency=${efficiency / 100}&n_charge_hours=4&n_discharge_hours=4`
+        const response = await fetchWithTimeout(
+          `https://gridalpha-production.up.railway.app/battery-arbitrage?zone=${encodeURIComponent(apiZone)}&efficiency=${efficiency / 100}&n_charge_hours=4&n_discharge_hours=4`
         );
         if (!response.ok) {
           throw new Error('API request failed');
@@ -47,7 +61,10 @@ export default function BatteryArbitrage({ selectedZone, setSelectedZone }: Batt
         const result = await response.json();
 
         const zoneRecord = result.data?.find(
-          (item: any) => item.zone_name === selectedZone || item.zone === selectedZone
+          (item: any) =>
+            (item.zone_name && item.zone_name.toUpperCase() === apiZone) ||
+            item.zone_name === selectedZone ||
+            item.zone === selectedZone
         );
 
         if (zoneRecord) {
@@ -94,7 +111,7 @@ export default function BatteryArbitrage({ selectedZone, setSelectedZone }: Batt
     };
 
     fetchBatteryData();
-  }, [selectedZone, efficiency, duration, cyclingCost]);
+  }, [selectedZone, apiZone, efficiency, duration, cyclingCost]);
   const { grossProfit, netProfit, cycles } = calculateDailyProfit(
     batterySchedule,
     batterySize,

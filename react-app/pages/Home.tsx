@@ -26,13 +26,19 @@ export default function Home() {
   const [error, setError] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
+  const fetchWithTimeout = (url: string, ms = 30000) => {
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), ms);
+    return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(t));
+  };
+
   const fetchData = async () => {
     setLoading(true);
     setError(false);
 
     try {
       // Fetch generation data
-      const genResponse = await fetch('https://gridalpha-production.up.railway.app/generation?hours=24');
+      const genResponse = await fetchWithTimeout('https://gridalpha-production.up.railway.app/generation?hours=24');
       if (!genResponse.ok) throw new Error('Generation API failed');
       const genResult = await genResponse.json();
 
@@ -45,7 +51,7 @@ export default function Home() {
       console.log('LAST RECORD:', JSON.stringify(genData?.[genData?.length - 1]));
 
       // Fetch weather/load data for BGE zone
-      const weatherResponse = await fetch('https://gridalpha-production.up.railway.app/weather?zone=BGE');
+      const weatherResponse = await fetchWithTimeout('https://gridalpha-production.up.railway.app/weather?zone=BGE');
       if (!weatherResponse.ok) throw new Error('Weather API failed');
       const weatherResult = await weatherResponse.json();
 
