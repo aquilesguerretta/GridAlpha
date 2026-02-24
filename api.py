@@ -37,6 +37,15 @@ LMP_ENDPOINT = f"{API_BASE_URL}/rt_unverified_hrl_lmps"
 
 PJM_TIMEZONE = ZoneInfo("America/New_York")
 ROWS_PER_PAGE = 100
+
+# Map invalid frontend zone IDs to valid PJM zone names (rt_unverified_hrl_lmps pnodes)
+# PJM-WESTERN_HUB and PJM-EASTERN_HUB do not exist; use PJM-RTO (system-wide) as closest equivalent
+ZONE_ALIAS: dict[str, str] = {
+    "PJM-WESTERN_HUB": "PJM-RTO",
+    "PJM-EASTERN_HUB": "PJM-RTO",
+    "western_hub": "PJM-RTO",
+    "eastern_hub": "PJM-RTO",
+}
 REQUEST_TIMEOUT = 30.0
 RENEWABLE_FUELS = {"Wind", "Solar", "Hydro", "Other Renewables"}
 
@@ -399,29 +408,25 @@ async def _pjm_get(url: str, params: dict[str, Any]) -> dict:
 
 async def _fetch_all_pages(url: str, params: dict[str, Any]) -> list[dict]:
     """
-    Async paginator for PJM endpoints.
-
-    Follows the 'next' link in each response's 'links' list until all rows
-    are retrieved.
+    Paginate through PJM API using rowCount and startRow.
+    PJM returns max 100 rows per page; loop until we get fewer than rowCount.
     """
     all_items: list[dict] = []
-    current_url: Optional[str] = url
-    current_params: Optional[dict] = params
+    start_row = 1
+    row_count = ROWS_PER_PAGE
 
-    while current_url:
-        body = await _pjm_get(current_url, current_params or {})
+    while True:
+        page_params = {**params, "startRow": start_row, "rowCount": row_count}
+        body = await _pjm_get(url, page_params)
         items = body.get("items", [])
         all_items.extend(items)
 
         total = body.get("totalRows", len(all_items))
-        logger.debug("Paginating gen_by_fuel: {}/{} rows", len(all_items), total)
+        logger.debug("Paginating: {}/{} rows", len(all_items), total)
 
-        next_href = next(
-            (lnk["href"] for lnk in body.get("links", []) if lnk.get("rel") == "next"),
-            None,
-        )
-        current_url = next_href
-        current_params = None  # next URL already encodes all params
+        if len(items) < row_count:
+            break
+        start_row += row_count
 
     return all_items
 
@@ -740,6 +745,10 @@ async def get_lmp(
     if demo:
         logger.info("GET /lmp [DEMO]")
         return _demo_section("lmp")
+
+    # Map invalid zone names (PJM-WESTERN_HUB, PJM-EASTERN_HUB) to PJM-RTO
+    if zone:
+        zone = ZONE_ALIAS.get(zone, zone)
 
     now_et = datetime.now(tz=PJM_TIMEZONE)
 
