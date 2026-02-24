@@ -6,8 +6,8 @@ export function toCelsius(f: number): number {
 }
 
 /**
- * Format temperature for display: "33.94°F / 1.1°C"
+ * Format temperature for display: "34°F / 1°C" (whole numbers only).
  */
 export function formatTempFandC(f: number): string {
-  return `${f}°F / ${toCelsius(f)}°C`;
+  return `${Math.round(f)}°F / ${Math.round((f - 32) * 5 / 9)}°C`;
 }
