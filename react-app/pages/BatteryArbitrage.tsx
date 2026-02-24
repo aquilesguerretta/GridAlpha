@@ -42,7 +42,7 @@ export default function BatteryArbitrage({ selectedZone, setSelectedZone }: Batt
   };
   const apiZone = zoneIdToApiName[selectedZone] ?? selectedZone.toUpperCase().replace(/_/g, '-');
 
-  const fetchWithTimeout = (url: string, ms = 30000) => {
+  const fetchWithTimeout = (url: string, ms = 60000) => {
     const controller = new AbortController();
     const t = setTimeout(() => controller.abort(), ms);
     return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(t));

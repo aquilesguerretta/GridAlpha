@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { RailwayWarmupProvider } from "@/react-app/contexts/RailwayWarmupContext";
 import HomePage from "@/react-app/pages/Home";
 import PriceIntelligence from "@/react-app/pages/PriceIntelligence";
 import ErrorBoundary from "@/react-app/components/ErrorBoundary";
@@ -17,6 +18,7 @@ export default function App() {
   const [selectedZone, setSelectedZone] = useState(zones[0].id);
 
   return (
+    <RailwayWarmupProvider>
     <Router>
       <div className="min-h-screen bg-background">
         <Navigation />
@@ -34,5 +36,6 @@ export default function App() {
         </main>
       </div>
     </Router>
+    </RailwayWarmupProvider>
   );
 }

@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Wind, Sun, RefreshCw, AlertCircle, Atom, Flame, Droplet, Mountain } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Wind, Sun, RefreshCw, Atom, Flame, Droplet, Mountain } from 'lucide-react';
+import { useRailwayWarmup } from '@/react-app/contexts/RailwayWarmupContext';
 import KpiCard from '@/react-app/components/KpiCard';
 import GenerationChart from '@/react-app/components/GenerationChart';
 import { Button } from '@/react-app/components/ui/button';
@@ -19,14 +20,18 @@ interface GenerationRecord {
   load_actual: number;
 }
 
+const FUEL_KEYS = ['nuclear', 'gas', 'coal', 'wind', 'solar', 'hydro', 'storage'] as const;
+
 export default function Home() {
+  const { ready: railwayReady } = useRailwayWarmup();
   const [data, setData] = useState<GenerationRecord[]>(sampleData);
   const [currentGeneration, setCurrentGeneration] = useState(sampleCurrent);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const cacheRef = useRef<{ data: GenerationRecord[]; current: GenerationRecord } | null>(null);
 
-  const fetchWithTimeout = (url: string, ms = 30000) => {
+  const fetchWithTimeout = (url: string, ms = 60000) => {
     const controller = new AbortController();
     const t = setTimeout(() => controller.abort(), ms);
     return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(t));
@@ -41,14 +46,6 @@ export default function Home() {
       const genResponse = await fetchWithTimeout('https://gridalpha-production.up.railway.app/generation?hours=24');
       if (!genResponse.ok) throw new Error('Generation API failed');
       const genResult = await genResponse.json();
-
-      // DEBUG: raw API output for data stability diagnosis
-      const genData = genResult?.data;
-      console.log('RAW GENERATION RESPONSE:', JSON.stringify(genResult));
-      console.log('GENERATION TIMESTAMP:', genResult?.meta?.timestamp);
-      console.log('GENERATION RECORDS COUNT:', genData?.length);
-      console.log('FIRST RECORD:', JSON.stringify(genData?.[0]));
-      console.log('LAST RECORD:', JSON.stringify(genData?.[genData?.length - 1]));
 
       // Fetch weather/load data for BGE zone
       const weatherResponse = await fetchWithTimeout('https://gridalpha-production.up.railway.app/weather?zone=BGE');
@@ -98,36 +95,41 @@ export default function Home() {
       );
 
       if (pivotedData.length > 0) {
-        setData(pivotedData);
-        // KPI: always use most recent completed hour (last element when sorted asc)
         const sortedDesc = [...pivotedData].sort(
           (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
         );
         const kpiRecord = sortedDesc[0];
-        console.log('GENERATION KPI RECORD USED:', JSON.stringify(kpiRecord));
+        cacheRef.current = { data: pivotedData, current: kpiRecord };
+        setData(pivotedData);
         setCurrentGeneration(kpiRecord);
       }
 
       setLastUpdated(new Date().toISOString());
     } catch (err) {
-      // Silently fall back to stub data
       setError(true);
-      setData(sampleData);
-      setCurrentGeneration(sampleCurrent);
+      if (cacheRef.current) {
+        setData(cacheRef.current.data);
+        setCurrentGeneration(cacheRef.current.current);
+      } else {
+        setData(sampleData);
+        setCurrentGeneration(sampleCurrent);
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    if (!railwayReady) return;
     fetchData();
     const interval = setInterval(fetchData, 5 * 60 * 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [railwayReady]);
 
-  const totalGeneration = Object.values(currentGeneration)
-    .filter((val) => typeof val === 'number')
-    .reduce((sum, val) => sum + val, 0);
+  const totalGeneration = FUEL_KEYS.reduce(
+    (sum, key) => sum + (Number(currentGeneration[key]) || 0),
+    0
+  );
   
   // Calculate percentages for each fuel type
   const coalPercentage = totalGeneration > 0 ? (currentGeneration.coal / totalGeneration * 100) : 0;

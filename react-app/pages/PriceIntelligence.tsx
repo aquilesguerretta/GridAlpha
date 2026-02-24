@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { DollarSign, TrendingUp, TrendingDown, BarChart3, Activity, Loader2 } from 'lucide-react';
 import { zones, lmpDataByZone as stubLmpData } from '@/react-app/data/lmpData';
 import { weatherLoadDataByZone as stubWeatherData } from '@/react-app/data/weatherLoadData';
@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/react-app/components/ui/select';
+import { useRailwayWarmup } from '@/react-app/contexts/RailwayWarmupContext';
 
 interface LMPDataPoint {
   timestamp: string;
@@ -43,20 +44,22 @@ interface PriceIntelligenceProps {
 const REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 
 export default function PriceIntelligence({ selectedZone, setSelectedZone }: PriceIntelligenceProps) {
+  const { ready: railwayReady } = useRailwayWarmup();
   const [zoneData, setZoneData] = useState<LMPDataPoint[] | null>(null);
   const [weatherLoadData, setWeatherLoadData] = useState<WeatherLoadData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshTick, setRefreshTick] = useState(0);
+  const lmpCacheRef = useRef<{ zone: string; data: LMPDataPoint[] } | null>(null);
+  const weatherCacheRef = useRef<{ zone: string; data: WeatherLoadData } | null>(null);
 
-  // Fetch with 10s timeout — prevents infinite loading when API hangs
-  const fetchWithTimeout = (url: string, ms = 30000): Promise<Response> => {
+  const fetchWithTimeout = (url: string, ms = 60000): Promise<Response> => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), ms);
     return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(timeoutId));
   };
 
-  // Fetch data: clear state first on zone change, then fetch both in parallel
   useEffect(() => {
+    if (!railwayReady) return;
     setZoneData(null);
     setWeatherLoadData(null);
     setLoading(true);
@@ -93,14 +96,9 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
           (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
         );
 
-        const currentLMPRecord = mappedData.length > 0 ? mappedData[mappedData.length - 1] : null;
-        console.log('RAW LMP RESPONSE:', JSON.stringify(result));
-        console.log('LMP RECORDS COUNT:', (result?.data ?? result?.records ?? []).length);
-        console.log('CURRENT LMP VALUE USED:', currentLMPRecord);
-        console.log('WHICH RECORD IS CURRENT:', JSON.stringify((result?.data ?? result?.records)?.[0]));
-
         if (!cancelled) {
           if (Array.isArray(mappedData) && mappedData.length > 0) {
+            lmpCacheRef.current = { zone: selectedZone, data: mappedData };
             setZoneData(mappedData);
           } else {
             const stub = stubLmpData[selectedZone];
@@ -108,10 +106,14 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
           }
         }
       } catch (err) {
-        console.error('[PriceIntelligence] LMP fetch failed:', err);
         if (!cancelled) {
-          const stub = stubLmpData[selectedZone];
-          setZoneData(Array.isArray(stub) && stub.length > 0 ? stub : []);
+          const cached = lmpCacheRef.current;
+          if (cached && cached.zone === selectedZone) {
+            setZoneData(cached.data);
+          } else {
+            const stub = stubLmpData[selectedZone];
+            setZoneData(Array.isArray(stub) && stub.length > 0 ? stub : []);
+          }
         }
       }
     };
@@ -137,7 +139,7 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
           }
 
           if (!cancelled) {
-            setWeatherLoadData({
+            const w = {
               temperature: Number(item.temperature_f ?? 50),
               weather_condition: mappedCondition,
               weather_alert: String(item.weather_alert ?? ''),
@@ -145,7 +147,9 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
               load_actual: loadActual,
               load_deviation_pct: loadDeviationPct,
               is_uncertainty_driver: Math.abs(loadDeviationPct) > 5,
-            });
+            };
+            weatherCacheRef.current = { zone: selectedZone, data: w };
+            setWeatherLoadData(w);
           }
         } else if (!cancelled) {
           const stub = stubWeatherData[selectedZone];
@@ -160,10 +164,13 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
           });
         }
       } catch (err) {
-        console.error('[PriceIntelligence] Weather fetch failed:', err);
         if (!cancelled) {
-          const stub = stubWeatherData[selectedZone];
-          setWeatherLoadData(stub ?? {
+          const cached = weatherCacheRef.current;
+          if (cached && cached.zone === selectedZone) {
+            setWeatherLoadData(cached.data);
+          } else {
+            const stub = stubWeatherData[selectedZone];
+            setWeatherLoadData(stub ?? {
             temperature: 50,
             weather_condition: 'cloudy' as const,
             weather_alert: '',
@@ -172,6 +179,7 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
             load_deviation_pct: 0,
             is_uncertainty_driver: false,
           });
+          }
         }
       }
     };
@@ -209,7 +217,7 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
       cancelled = true;
       clearTimeout(safetyTimeout);
     };
-  }, [selectedZone, refreshTick]);
+  }, [selectedZone, refreshTick, railwayReady]);
 
   // Auto-refresh every 5 min (PJM data updates hourly; faster refresh adds noise)
   useEffect(() => {
