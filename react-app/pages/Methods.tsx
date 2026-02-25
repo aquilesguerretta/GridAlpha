@@ -2,7 +2,7 @@ import { Card } from '@/react-app/components/ui/card';
 
 export default function Methods() {
   return (
-    <div className="space-y-8 max-w-5xl mx-auto pb-12">
+    <div className="space-y-8 max-w-5xl mx-auto pb-16">
       {/* Header */}
       <div className="space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Methods & Documentation</h2>

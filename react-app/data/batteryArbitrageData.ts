@@ -28,55 +28,44 @@ export const generateBatterySchedule = (
   const chargeHours = isProfitable ? Math.ceil(duration * 1.5) : 0;
   const dischargeHours = isProfitable ? Math.ceil(duration) : 0;
   
-  // Split discharge across morning and evening peaks
+  // Charge first (overnight + midday), then discharge (morning + evening) — enforce chronological order
+  const overnightChargeHours = Math.ceil(chargeHours * 0.67);
+  const middayChargeHours = Math.floor(chargeHours * 0.33);
   const morningDischargeHours = Math.ceil(dischargeHours / 2);
   const eveningDischargeHours = Math.floor(dischargeHours / 2);
-  
-  // Split charging across overnight and midday periods
-  const overnightChargeHours = Math.ceil(chargeHours * 0.67); // 2/3 overnight
-  const middayChargeHours = Math.floor(chargeHours * 0.33); // 1/3 midday
-  
+
+  // Build charge hours first (all before any discharge): 2–2+overnight, then 11–11+midday
+  const chargeHourList: number[] = [];
+  for (let h = 2; h < 2 + overnightChargeHours && h < 24; h++) chargeHourList.push(h);
+  for (let h = 11; h < 11 + middayChargeHours && h < 24; h++) chargeHourList.push(h);
+  const lastChargeHour = chargeHourList.length > 0 ? Math.max(...chargeHourList) : -1;
+
+  // Discharge only after last charge hour
+  const dischargeStart = Math.max(7, lastChargeHour + 1);
+  const dischargeHourList: number[] = [];
+  for (let h = dischargeStart; h < dischargeStart + morningDischargeHours && h < 24; h++) dischargeHourList.push(h);
+  for (let h = Math.max(18, dischargeStart + morningDischargeHours); h < Math.min(24, 18 + eveningDischargeHours); h++) dischargeHourList.push(h);
+  while (dischargeHourList.length < dischargeHours) {
+    const next = (dischargeHourList[dischargeHourList.length - 1] ?? 0) + 1;
+    if (next < 24) dischargeHourList.push(next);
+    else break;
+  }
+
   for (let hour = 0; hour < 24; hour++) {
     let action: 'charge' | 'discharge' | 'idle' = 'idle';
     let mw = 0;
-    let price = 35; // Base price
-    
-    if (isProfitable) {
-      // Overnight charging (low price) - starts at 2 AM
-      if (hour >= 2 && hour < 2 + overnightChargeHours) {
-        action = 'charge';
-        mw = -50;
-        price = 22 + Math.random() * 8; // $22-30/MWh
-      }
-      // Morning discharge peak - starts at 7 AM
-      else if (hour >= 7 && hour < 7 + morningDischargeHours) {
-        action = 'discharge';
-        mw = 50;
-        price = 58 + Math.random() * 12; // $58-70/MWh
-      }
-      // Midday charging (renewable peak) - starts at 11 AM
-      else if (hour >= 11 && hour < 11 + middayChargeHours) {
-        action = 'charge';
-        mw = -50;
-        price = 22 + Math.random() * 8; // $22-30/MWh
-      }
-      // Evening discharge peak - starts at 6 PM
-      else if (hour >= 18 && hour < 18 + eveningDischargeHours) {
-        action = 'discharge';
-        mw = 50;
-        price = 65 + Math.random() * 15; // $65-80/MWh
-      }
-      // Idle periods
-      else {
-        action = 'idle';
-        mw = 0;
-        price = 35 + Math.random() * 10; // $35-45/MWh
-      }
+    let price = 35;
+
+    if (chargeHourList.includes(hour)) {
+      action = 'charge';
+      mw = -50;
+      price = 22 + Math.random() * 8;
+    } else if (dischargeHourList.includes(hour)) {
+      action = 'discharge';
+      mw = 50;
+      price = 58 + Math.random() * 22;
     } else {
-      // Not profitable - all idle
-      action = 'idle';
-      mw = 0;
-      price = 35 + Math.random() * 10; // $35-45/MWh
+      price = 35 + Math.random() * 10;
     }
     
     schedule.push({
@@ -109,10 +98,15 @@ export const calculateDailyProfit = (
   const avgChargePrice = chargingHours.reduce((sum, h) => sum + h.price, 0) / chargingHours.length;
   const avgDischargePrice = dischargingHours.reduce((sum, h) => sum + h.price, 0) / dischargingHours.length;
   const priceSpread = (avgDischargePrice * efficiency) - avgChargePrice;
-  const grossProfit = batterySize * duration * priceSpread;
-  
-  // Calculate cycles (1 full charge/discharge = 1 cycle)
-  const cycles = 1; // Assuming 1 full cycle per day
+
+  // Cycles: count charge->discharge transitions (each is one full cycle)
+  let cycles = 0;
+  for (let h = 1; h < schedule.length; h++) {
+    if (schedule[h - 1].action === 'charge' && schedule[h].action === 'discharge') cycles += 1;
+  }
+  if (cycles === 0 && chargingHours.length > 0 && dischargingHours.length > 0) cycles = 1;
+
+  const grossProfit = cycles * batterySize * duration * priceSpread;
   const cyclingCostTotal = cycles * cyclingCost * batterySize * duration;
   const netProfit = grossProfit - cyclingCostTotal;
   

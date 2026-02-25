@@ -176,7 +176,10 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
           const item = result.data[0] as Record<string, unknown>;
           const loadForecast = Number(item.load_forecast_mw ?? 0);
           const loadActual = Number(item.actual_load_mw ?? 0);
-          const loadDeviationPct = loadForecast !== 0 ? ((loadActual - loadForecast) / loadForecast) * 100 : 0;
+          // Fix 3: Delta = ((actual - forecast) / forecast) * 100, rounded to 1 decimal. If actual === forecast, must show 0.0%.
+          const loadDeviationPct = loadForecast !== 0
+            ? Math.round(((loadActual - loadForecast) / loadForecast) * 1000) / 10
+            : 0;
 
           const weatherCondition = String(item.weather_alert ?? 'clear').toLowerCase();
           let mappedCondition: 'sunny' | 'cloudy' | 'snowy' = 'cloudy';
@@ -422,6 +425,7 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <KpiCard
           title="Current LMP"
+          titleSubtitle="Real-time price"
           value={currentLMP ? currentLMP.total.toFixed(2) : '0.00'}
           unit="$/MWh"
           trend={changePercent}
@@ -429,6 +433,7 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
         />
         <KpiCard
           title="24h Average"
+          titleSubtitle="24-hour historical average"
           value={avgLMP.toFixed(2)}
           unit="$/MWh"
           trend={-2.4}

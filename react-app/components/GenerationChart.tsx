@@ -116,10 +116,10 @@ export default function GenerationChart({ data }: GenerationChartProps) {
         </ComposedChart>
       </ResponsiveContainer>
       
-      {/* Load Forecast Sparkline */}
+      {/* Load Forecast vs Actual - Fix 1: taller (120px), thicker lines, forecast gray dashed, actual white solid */}
       <div className="mt-6">
         <h3 className="text-sm font-semibold mb-2 text-muted-foreground">Load Forecast vs Actual</h3>
-        <ResponsiveContainer width="100%" height={80}>
+        <ResponsiveContainer width="100%" height={120}>
           <LineChart data={loadData}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
             <XAxis
@@ -146,7 +146,7 @@ export default function GenerationChart({ data }: GenerationChartProps) {
                 return [`${numVal.toLocaleString()} MW`, ''];
               }}
             />
-            <SimpleLine type="monotone" dataKey="Forecast" stroke="#6b7280" strokeWidth={2} dot={false} name="Forecast" />
+            <SimpleLine type="monotone" dataKey="Forecast" stroke="#6b7280" strokeWidth={2} strokeDasharray="5 5" dot={false} name="Forecast" />
             <SimpleLine type="monotone" dataKey="Actual" stroke="#ffffff" strokeWidth={2} dot={false} name="Actual" />
           </LineChart>
         </ResponsiveContainer>

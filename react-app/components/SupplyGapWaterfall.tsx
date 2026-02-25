@@ -17,7 +17,7 @@ export default function SupplyGapWaterfall({
   const netPosition = currentCapacity + retirements + newProjects;
   const gap = netPosition - loadForecast;
   
-  // Build waterfall data
+  // Build waterfall data — Fix 10: Load Forecast bar distinct (white/light gray, dashed outline)
   const data = [
     {
       name: 'Current\nCapacity',
@@ -25,6 +25,7 @@ export default function SupplyGapWaterfall({
       displayValue: currentCapacity,
       fill: 'hsl(var(--muted))',
       isBase: true,
+      isLoadForecast: false,
     },
     {
       name: 'Scheduled\nRetirements',
@@ -32,6 +33,7 @@ export default function SupplyGapWaterfall({
       displayValue: currentCapacity + retirements,
       fill: '#ef4444',
       isBase: false,
+      isLoadForecast: false,
     },
     {
       name: 'New\nProjects',
@@ -39,6 +41,7 @@ export default function SupplyGapWaterfall({
       displayValue: currentCapacity + retirements + newProjects,
       fill: '#10b981',
       isBase: false,
+      isLoadForecast: false,
     },
     {
       name: 'Net\nPosition',
@@ -46,14 +49,17 @@ export default function SupplyGapWaterfall({
       displayValue: netPosition,
       fill: gap >= 0 ? 'hsl(var(--primary))' : '#ef4444',
       isBase: true,
+      isLoadForecast: false,
     },
     {
       name: 'Load\nForecast',
       value: loadForecast,
       displayValue: loadForecast,
-      fill: 'hsl(var(--muted))',
+      fill: '#e5e7eb',
+      stroke: 'hsl(var(--muted-foreground))',
+      strokeDasharray: '5 5',
       isBase: true,
-      isDashed: true,
+      isLoadForecast: true,
     },
   ];
   
@@ -66,10 +72,12 @@ export default function SupplyGapWaterfall({
         </p>
       </div>
       
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width="100%" height={480}>
         <BarChart
           data={data}
           margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+          barCategoryGap="10%"
+          barGap={8}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
           <XAxis
@@ -91,10 +99,10 @@ export default function SupplyGapWaterfall({
               border: '1px solid hsl(var(--border))',
               borderRadius: '8px',
             }}
-            formatter={(value: unknown, _name: unknown, props: any) => {
+            formatter={(value: unknown, _name: unknown, props: { payload?: { name?: string; isLoadForecast?: boolean } }) => {
               if (value === undefined || value === null || !props.payload) return ['', ''];
               const numVal = typeof value === 'number' ? value : 0;
-              if (props.payload.name === 'Load\nForecast') {
+              if (props.payload.name === 'Load\nForecast' || props.payload.isLoadForecast) {
                 return [`${numVal.toLocaleString()} MW (Target)`, ''];
               }
               if (props.payload.isBase) {
@@ -114,7 +122,10 @@ export default function SupplyGapWaterfall({
               <Cell
                 key={`cell-${index}`}
                 fill={entry.fill}
-                opacity={entry.isDashed ? 0.5 : 1}
+                stroke={entry.isLoadForecast ? entry.stroke : undefined}
+                strokeDasharray={entry.isLoadForecast ? entry.strokeDasharray : undefined}
+                strokeWidth={entry.isLoadForecast ? 2 : undefined}
+                opacity={entry.isLoadForecast ? 1 : 1}
               />
             ))}
           </Bar>

@@ -8,9 +8,11 @@ interface KpiCardProps {
   trend?: number;
   icon?: React.ReactNode;
   subtitle?: string;
+  /** Fix 5: Small text below card title (e.g. "Real-time price") */
+  titleSubtitle?: string;
 }
 
-export default function KpiCard({ title, value, unit, trend, icon, subtitle }: KpiCardProps) {
+export default function KpiCard({ title, value, unit, trend, icon, subtitle, titleSubtitle }: KpiCardProps) {
   return (
     <Card className="relative overflow-hidden p-6 pt-12 pr-12 bg-card border-border backdrop-blur-sm">
       {icon && (
@@ -22,7 +24,10 @@ export default function KpiCard({ title, value, unit, trend, icon, subtitle }: K
         </div>
       )}
       <div className="flex flex-col">
-        <p className="text-muted-foreground text-sm font-medium mb-2">{title}</p>
+        <p className={`text-muted-foreground text-sm font-medium ${titleSubtitle ? 'mb-0.5' : 'mb-2'}`}>{title}</p>
+        {titleSubtitle && (
+          <p className="text-xs text-muted-foreground mb-2 font-normal">{titleSubtitle}</p>
+        )}
         <div className="flex items-baseline gap-2">
           <span className="text-4xl font-bold tracking-tight">{value}</span>
           <span className="text-lg text-muted-foreground">{unit}</span>

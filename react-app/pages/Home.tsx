@@ -136,6 +136,22 @@ export default function Home() {
   const windPercentage = totalGeneration > 0 ? ((currentGeneration?.wind ?? 0) / totalGeneration * 100) : 0;
   const solarPercentage = totalGeneration > 0 ? ((currentGeneration?.solar ?? 0) / totalGeneration * 100) : 0;
 
+  // Fix 2: Real hour-over-hour % change from last two data points: ((current - previous) / previous) * 100
+  const lastTwo = data.length >= 2 ? [data[data.length - 2], data[data.length - 1]] : [];
+  const trend = (key: 'coal' | 'gas' | 'hydro' | 'nuclear' | 'wind' | 'solar'): number => {
+    if (lastTwo.length < 2) return 0;
+    const prev = lastTwo[0][key] ?? 0;
+    const curr = lastTwo[1][key] ?? 0;
+    if (prev === 0) return 0;
+    return Number((((curr - prev) / prev) * 100).toFixed(1));
+  };
+  const coalTrend = trend('coal');
+  const gasTrend = trend('gas');
+  const hydroTrend = trend('hydro');
+  const nuclearTrend = trend('nuclear');
+  const windTrend = trend('wind');
+  const solarTrend = trend('solar');
+
   const isLoading = loading || !currentGeneration;
 
   if (isLoading) {
@@ -199,7 +215,7 @@ export default function Home() {
           value={Math.round(currentGeneration.coal).toLocaleString()}
           unit="MW"
           subtitle={`${coalPercentage.toFixed(1)}% of total`}
-          trend={-1.8}
+          trend={coalTrend}
           icon={<Mountain className="w-10 h-10" />}
         />
         <KpiCard
@@ -207,7 +223,7 @@ export default function Home() {
           value={Math.round(currentGeneration.gas).toLocaleString()}
           unit="MW"
           subtitle={`${gasPercentage.toFixed(1)}% of total`}
-          trend={3.4}
+          trend={gasTrend}
           icon={<Flame className="w-10 h-10" />}
         />
         <KpiCard
@@ -215,7 +231,7 @@ export default function Home() {
           value={Math.round(currentGeneration.hydro).toLocaleString()}
           unit="MW"
           subtitle={`${hydroPercentage.toFixed(1)}% of total`}
-          trend={0.6}
+          trend={hydroTrend}
           icon={<Droplet className="w-10 h-10" />}
         />
         <KpiCard
@@ -223,7 +239,7 @@ export default function Home() {
           value={Math.round(currentGeneration.nuclear).toLocaleString()}
           unit="MW"
           subtitle={`${nuclearPercentage.toFixed(1)}% of total`}
-          trend={-0.3}
+          trend={nuclearTrend}
           icon={<Atom className="w-10 h-10" />}
         />
         <KpiCard
@@ -231,7 +247,7 @@ export default function Home() {
           value={Math.round(currentGeneration.wind).toLocaleString()}
           unit="MW"
           subtitle={`${windPercentage.toFixed(1)}% of total`}
-          trend={5.2}
+          trend={windTrend}
           icon={<Wind className="w-10 h-10" />}
         />
         <KpiCard
@@ -239,7 +255,7 @@ export default function Home() {
           value={Math.round(currentGeneration.solar).toLocaleString()}
           unit="MW"
           subtitle={`${solarPercentage.toFixed(1)}% of total`}
-          trend={-1.5}
+          trend={solarTrend}
           icon={<Sun className="w-10 h-10" />}
         />
       </div>

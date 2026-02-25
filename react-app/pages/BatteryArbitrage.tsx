@@ -72,26 +72,39 @@ export default function BatteryArbitrage({ selectedZone, setSelectedZone }: Batt
 
         if (zoneRecord) {
           const schedule: BatteryAction[] = [];
-          const avgPrice = (zoneRecord.charge_price + zoneRecord.discharge_price) / 2;
-
-          // charge_hours and discharge_hours are ISO timestamp strings — extract hour integer
           const chargeHourInts: number[] = (zoneRecord.charge_hours as string[]).map(
             (h: string) => new Date(h).getHours()
-          );
+          ).sort((a, b) => a - b);
           const dischargeHourInts: number[] = (zoneRecord.discharge_hours as string[]).map(
             (h: string) => new Date(h).getHours()
-          );
+          ).sort((a, b) => a - b);
+
+          // Fix 7: Enforce charge before discharge chronologically.
+          const nCharge = chargeHourInts.length;
+          const nDischarge = dischargeHourInts.length;
+          const lastChargeHour = nCharge > 0 ? Math.max(...chargeHourInts) : -1;
+          const firstDischargeHour = nDischarge > 0 ? Math.min(...dischargeHourInts) : 24;
+          let finalDischargeHours = dischargeHourInts;
+          if (nDischarge > 0 && lastChargeHour >= 0 && firstDischargeHour <= lastChargeHour) {
+            finalDischargeHours = Array.from({ length: nDischarge }, (_, i) => (lastChargeHour + 1 + i) % 24);
+            finalDischargeHours.sort((a, b) => a - b);
+          }
+
+          const chargeSet = new Set(chargeHourInts);
+          const dischargeSet = new Set(finalDischargeHours);
+          const avgChargePrice = zoneRecord.charge_price;
+          const avgDischargePrice = zoneRecord.discharge_price;
 
           for (let hour = 0; hour < 24; hour++) {
             let action: 'charge' | 'discharge' | 'idle' = 'idle';
-            let price = avgPrice;
+            let price = (avgChargePrice + avgDischargePrice) / 2;
 
-            if (chargeHourInts.includes(hour)) {
+            if (chargeSet.has(hour)) {
               action = 'charge';
-              price = zoneRecord.charge_price;
-            } else if (dischargeHourInts.includes(hour)) {
+              price = avgChargePrice;
+            } else if (dischargeSet.has(hour)) {
               action = 'discharge';
-              price = zoneRecord.discharge_price;
+              price = avgDischargePrice;
             }
 
             schedule.push({
@@ -100,6 +113,25 @@ export default function BatteryArbitrage({ selectedZone, setSelectedZone }: Batt
               mw: action === 'charge' ? -50 : action === 'discharge' ? 50 : 0,
               price: Number(price.toFixed(2)),
             });
+          }
+
+          // Fix 8: If STRONG signal and >= 8 idle hours, add a second charge/discharge cycle in remaining idle hours.
+          const idleHours = schedule.map((s, h) => (s.action === 'idle' ? h : -1)).filter((h) => h >= 0);
+          const profitPerMWh = duration > 0
+            ? (calculateDailyProfit(schedule, batterySize, duration, efficiency / 100, cyclingCost).netProfit / (batterySize * duration))
+            : 0;
+          const signal = getArbitrageSignal(profitPerMWh);
+          if (signal.status === 'STRONG' && idleHours.length >= 8 && nCharge > 0 && nDischarge > 0) {
+            const nC = Math.min(nCharge, Math.floor(idleHours.length / 2));
+            const nD = Math.min(nDischarge, idleHours.length - nC);
+            for (let i = 0; i < nC; i++) {
+              const h = idleHours[i];
+              schedule[h] = { hour: h, action: 'charge', mw: -50, price: avgChargePrice };
+            }
+            for (let i = 0; i < nD; i++) {
+              const h = idleHours[nC + i];
+              schedule[h] = { hour: h, action: 'discharge', mw: 50, price: avgDischargePrice };
+            }
           }
 
           setBatterySchedule(schedule);

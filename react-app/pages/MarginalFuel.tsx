@@ -203,6 +203,39 @@ export default function MarginalFuel({ selectedZone, setSelectedZone }: Marginal
       {/* Gantt Chart */}
       <MarginalFuelGantt timeline={data.timeline_24h} />
 
+      {/* Fix 9: Marginal Fuel Summary table - Hours as Marginal from 24h Gantt data */}
+      <Card className="p-6 bg-card border-border backdrop-blur-sm">
+        <h3 className="text-lg font-semibold mb-4">Marginal Fuel Summary</h3>
+        <div className="overflow-x-auto rounded-lg border border-border">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-muted/30">
+                <th className="px-4 py-3 text-left font-semibold text-muted-foreground">Fuel Type</th>
+                <th className="px-4 py-3 text-right font-semibold text-muted-foreground">Hours as Marginal</th>
+                <th className="px-4 py-3 text-right font-semibold text-muted-foreground">Avg Price When Marginal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(() => {
+                const hoursByFuel: Record<string, number> = {};
+                data.timeline_24h.forEach(({ fuel_type }) => {
+                  hoursByFuel[fuel_type] = (hoursByFuel[fuel_type] ?? 0) + 1;
+                });
+                const entries = Object.entries(hoursByFuel).sort(([a], [b]) => a.localeCompare(b));
+                return entries.map(([fuel, hours]) => (
+                  <tr key={fuel} className="border-b border-border/50 hover:bg-muted/20">
+                    <td className="px-4 py-3 font-medium">{fuel}</td>
+                    <td className="px-4 py-3 text-right">{hours}</td>
+                    <td className="px-4 py-3 text-right text-muted-foreground">—</td>
+                  </tr>
+                ));
+              })()}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-xs text-muted-foreground mt-2">Calculated from 24-hour Gantt timeline. Price data not available in current API.</p>
+      </Card>
+
       {/* Info Banner */}
       <div className="p-4 bg-muted/50 border border-border rounded-lg">
         <p className="text-sm text-muted-foreground">

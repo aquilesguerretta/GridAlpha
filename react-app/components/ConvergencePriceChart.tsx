@@ -36,7 +36,10 @@ export default function ConvergencePriceChart({ data }: ConvergencePriceChartPro
             stroke="hsl(var(--muted-foreground))"
             tick={{ fill: 'hsl(var(--muted-foreground))' }}
             label={{ value: 'Hour', position: 'insideBottom', offset: -5, fill: 'hsl(var(--muted-foreground))' }}
-            tickFormatter={(hour) => `${hour}:00`}
+            tickFormatter={(hour) => `${Number(hour)}:00`}
+            domain={[0, 23]}
+            tickCount={12}
+            type="number"
           />
           <YAxis
             stroke="hsl(var(--muted-foreground))"
