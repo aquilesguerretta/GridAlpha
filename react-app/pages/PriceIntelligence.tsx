@@ -46,6 +46,8 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
   const { ready: railwayReady } = useRailwayWarmup();
   const [zoneData, setZoneData] = useState<LMPDataPoint[] | null>(null);
   const [weatherLoadData, setWeatherLoadData] = useState<WeatherLoadData | null>(null);
+  /** Current LMP snapshot per zone (last point in time series) — same fetch cycle as selected zone */
+  const [allZonesSnapshot, setAllZonesSnapshot] = useState<Record<string, { currentLMP: number; currentCongestion: number }> | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshTick, setRefreshTick] = useState(0);
   const lmpCacheRef = useRef<{ zone: string; data: LMPDataPoint[] } | null>(null);
@@ -62,25 +64,25 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
     if (!selectedZone || typeof selectedZone !== 'string' || selectedZone.trim() === '') return;
     setZoneData(null);
     setWeatherLoadData(null);
+    setAllZonesSnapshot(null);
     setLoading(true);
     let cancelled = false;
 
+    const zoneIdToApiName: Record<string, string> = {
+      western_hub: 'PJM-WESTERN_HUB',
+      eastern_hub: 'PJM-EASTERN_HUB',
+      aep: 'AEP', aps: 'APS', atsi: 'ATSI', bge: 'BGE', comed: 'COMED',
+      dom: 'DOM', dpl: 'DPL', peco: 'PECO', ppl: 'PPL', pseg: 'PSEG',
+    };
+
     const fetchLMPData = async (): Promise<void> => {
       try {
-        // Map our zone ids to API zone names (PJM uses BGE, COMED, PSEG, etc.)
-        const zoneIdToApiName: Record<string, string> = {
-          western_hub: 'PJM-WESTERN_HUB',
-          eastern_hub: 'PJM-EASTERN_HUB',
-          aep: 'AEP', aps: 'APS', atsi: 'ATSI', bge: 'BGE', comed: 'COMED',
-          dom: 'DOM', dpl: 'DPL', peco: 'PECO', ppl: 'PPL', pseg: 'PSEG',
-        };
         const apiZone = zoneIdToApiName[selectedZone] ?? selectedZone.toUpperCase().replace(/_/g, ' ');
         const url = `https://gridalpha-production.up.railway.app/lmp?zone=${encodeURIComponent(apiZone)}&snapshot=false&hours=24`;
         const response = await fetchWithTimeout(url);
         if (!response.ok) throw new Error(`API request failed: ${response.status} ${response.statusText}`);
         const result = await response.json();
 
-        // Railway API returns: lmp_total, energy_component, congestion_component, loss_component, timestamp
         const rawData = result.data ?? result.records ?? [];
         const mapped: LMPDataPoint[] = Array.isArray(rawData)
           ? rawData.map((item: Record<string, unknown>) => ({
@@ -91,7 +93,6 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
               total: Number(item.lmp_total ?? item.total_lmp_rt ?? 0),
             }))
           : [];
-        // Sort by timestamp ascending (oldest first) so chart and arr[length-1]=current are deterministic
         const mappedData = mapped.sort(
           (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
         );
@@ -116,6 +117,53 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
           }
         }
       }
+    };
+
+    /** Fetch current LMP snapshot for every PJM zone (same API, same refresh cycle). */
+    const fetchAllZonesSnapshot = async (): Promise<Record<string, { currentLMP: number; currentCongestion: number }>> => {
+      const snapshot: Record<string, { currentLMP: number; currentCongestion: number }> = {};
+      const zoneIds = (zones ?? []).map((z) => z.id);
+      await Promise.all(
+        zoneIds.map(async (zoneId) => {
+          try {
+            const apiZone = zoneIdToApiName[zoneId] ?? zoneId.toUpperCase().replace(/_/g, ' ');
+            const url = `https://gridalpha-production.up.railway.app/lmp?zone=${encodeURIComponent(apiZone)}&snapshot=false&hours=24`;
+            const response = await fetchWithTimeout(url);
+            if (!response.ok) throw new Error(`LMP failed: ${zoneId}`);
+            const result = await response.json();
+            const rawData = result.data ?? result.records ?? [];
+            const mapped: LMPDataPoint[] = Array.isArray(rawData)
+              ? rawData.map((item: Record<string, unknown>) => ({
+                  timestamp: String(item.timestamp ?? item.timestamp_ept ?? item.datetime_beginning_ept ?? ''),
+                  energy: Number(item.energy_component ?? 0),
+                  congestion: Number(item.congestion_component ?? 0),
+                  loss: Number(item.loss_component ?? 0),
+                  total: Number(item.lmp_total ?? item.total_lmp_rt ?? 0),
+                }))
+              : [];
+            const sorted = mapped.sort(
+              (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+            );
+            const last = sorted.length > 0 ? sorted[sorted.length - 1] : null;
+            if (last) {
+              snapshot[zoneId] = { currentLMP: last.total, currentCongestion: last.congestion };
+            } else {
+              const stub = stubLmpData[zoneId];
+              const stubLast = Array.isArray(stub) && stub.length > 0 ? stub[stub.length - 1] : null;
+              snapshot[zoneId] = stubLast
+                ? { currentLMP: stubLast.total, currentCongestion: stubLast.congestion }
+                : { currentLMP: 0, currentCongestion: 0 };
+            }
+          } catch {
+            const stub = stubLmpData[zoneId];
+            const stubLast = Array.isArray(stub) && stub.length > 0 ? stub[stub.length - 1] : null;
+            snapshot[zoneId] = stubLast
+              ? { currentLMP: stubLast.total, currentCongestion: stubLast.congestion }
+              : { currentLMP: 0, currentCongestion: 0 };
+          }
+        })
+      );
+      return snapshot;
     };
 
     const fetchWeatherData = async (): Promise<void> => {
@@ -184,8 +232,22 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
       }
     };
 
-    void Promise.allSettled([fetchLMPData(), fetchWeatherData()]).then(() => {
-      if (!cancelled) setLoading(false);
+    void Promise.allSettled([fetchLMPData(), fetchWeatherData(), fetchAllZonesSnapshot()]).then((results) => {
+      if (!cancelled) {
+        setLoading(false);
+        const snapshotResult = results[2];
+        if (snapshotResult.status === 'fulfilled' && snapshotResult.value && Object.keys(snapshotResult.value).length > 0) {
+          setAllZonesSnapshot(snapshotResult.value);
+        } else {
+          const fallback: Record<string, { currentLMP: number; currentCongestion: number }> = {};
+          (zones ?? []).forEach((z) => {
+            const stub = stubLmpData[z.id];
+            const last = Array.isArray(stub) && stub.length > 0 ? stub[stub.length - 1] : null;
+            fallback[z.id] = last ? { currentLMP: last.total, currentCongestion: last.congestion } : { currentLMP: 0, currentCongestion: 0 };
+          });
+          setAllZonesSnapshot(fallback);
+        }
+      }
     });
 
     // Safety: if fetches hang or take >12s, force loading off and ensure demo data
@@ -210,6 +272,16 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
             is_uncertainty_driver: false,
           };
         });
+        setAllZonesSnapshot(prev => {
+          if (prev !== null && Object.keys(prev).length > 0) return prev;
+          const fallback: Record<string, { currentLMP: number; currentCongestion: number }> = {};
+          (zones ?? []).forEach((z) => {
+            const stub = stubLmpData[z.id];
+            const last = Array.isArray(stub) && stub.length > 0 ? stub[stub.length - 1] : null;
+            fallback[z.id] = last ? { currentLMP: last.total, currentCongestion: last.congestion } : { currentLMP: 0, currentCongestion: 0 };
+          });
+          return fallback;
+        });
       }
     }, 12000);
 
@@ -226,7 +298,7 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
   }, []);
 
   // Loading state: show skeleton until data is ready (never show numbers until fetch resolves)
-  if (loading || zoneData === null || weatherLoadData === null) {
+  if (loading || zoneData === null || weatherLoadData === null || allZonesSnapshot === null) {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -285,32 +357,34 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
 
   const selectedZoneName = zones?.find?.(z => z.id === selectedZone)?.name ?? selectedZone;
 
-  const zoneSummaries = (zones ?? []).map((zone) => {
-    const data = stubLmpData?.[zone.id];
-    if (!Array.isArray(data) || data.length === 0) {
-      return { zoneName: zone.name, currentLMP: 0, avgCongestion: 0 };
-    }
-    const current = data[data.length - 1];
-    const avgCong = data.reduce((sum, d) => sum + d.congestion, 0) / data.length;
+  // Bottom 4 cards: use current LMP snapshot for every zone (from same fetch cycle as top cards)
+  const zoneList = (zones ?? []).map((zone) => {
+    const snap = allZonesSnapshot[zone.id];
     return {
+      zoneId: zone.id,
       zoneName: zone.name,
-      currentLMP: current?.total ?? 0,
-      avgCongestion: avgCong,
+      currentLMP: snap?.currentLMP ?? 0,
+      currentCongestion: snap?.currentCongestion ?? 0,
     };
   });
 
-  const avgLMPAcrossZones = zoneSummaries.length > 0
-    ? zoneSummaries.reduce((sum, z) => sum + z.currentLMP, 0) / zoneSummaries.length
+  const avgLMPAcrossZones = zoneList.length > 0
+    ? zoneList.reduce((sum, z) => sum + z.currentLMP, 0) / zoneList.length
     : 0;
-  const highestZone = zoneSummaries.length > 0
-    ? zoneSummaries.reduce((max, z) => z.currentLMP > max.currentLMP ? z : max, zoneSummaries[0])
-    : { zoneName: '', currentLMP: 0, avgCongestion: 0 };
-  const lowestZone = zoneSummaries.length > 0
-    ? zoneSummaries.reduce((min, z) => z.currentLMP < min.currentLMP ? z : min, zoneSummaries[0])
-    : { zoneName: '', currentLMP: 0, avgCongestion: 0 };
-  const mostCongestedZone = zoneSummaries.length > 0
-    ? zoneSummaries.reduce((max, z) => Math.abs(z.avgCongestion) > Math.abs(max.avgCongestion) ? z : max, zoneSummaries[0])
-    : { zoneName: '', currentLMP: 0, avgCongestion: 0 };
+  const highestZone = zoneList.length > 0
+    ? zoneList.reduce((max, z) => z.currentLMP > max.currentLMP ? z : max, zoneList[0])
+    : { zoneName: '', zoneId: '', currentLMP: 0, currentCongestion: 0 };
+  const lowestZone = zoneList.length > 0
+    ? zoneList.reduce((min, z) => z.currentLMP < min.currentLMP ? z : min, zoneList[0])
+    : { zoneName: '', zoneId: '', currentLMP: 0, currentCongestion: 0 };
+  const mostCongestedZone = zoneList.length > 0
+    ? zoneList.reduce((max, z) => Math.abs(z.currentCongestion) > Math.abs(max.currentCongestion) ? z : max, zoneList[0])
+    : { zoneName: '', zoneId: '', currentLMP: 0, currentCongestion: 0 };
+
+  console.log(
+    '[PriceIntelligence] All zone current LMPs (snapshot):',
+    Object.fromEntries(zoneList.map((z) => [z.zoneName, z.currentLMP]))
+  );
 
   return (
     <div className="space-y-6">
@@ -403,7 +477,7 @@ export default function PriceIntelligence({ selectedZone, setSelectedZone }: Pri
         />
         <KpiCard
           title="Most Congested Zone"
-          value={mostCongestedZone.avgCongestion.toFixed(2)}
+          value={mostCongestedZone.currentCongestion.toFixed(2)}
           unit="$/MWh"
           subtitle={mostCongestedZone.zoneName}
           trend={5.1}
