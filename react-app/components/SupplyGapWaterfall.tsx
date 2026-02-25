@@ -99,7 +99,7 @@ export default function SupplyGapWaterfall({
               border: '1px solid hsl(var(--border))',
               borderRadius: '8px',
             }}
-            formatter={(value: unknown, _name: unknown, props: { payload?: { name?: string; isLoadForecast?: boolean } }) => {
+            formatter={(value: unknown, _name: unknown, props: { payload?: { name?: string; isLoadForecast?: boolean; isBase?: boolean } }) => {
               if (value === undefined || value === null || !props.payload) return ['', ''];
               const numVal = typeof value === 'number' ? value : 0;
               if (props.payload.name === 'Load\nForecast' || props.payload.isLoadForecast) {
